@@ -1,0 +1,10 @@
+# 设置 邮件服务
+
+email:
+  email_address: "reschen@126.com"    # 邮箱地址
+  username: "reschen@126.com"         # 邮箱用户名（通常和邮箱地址相同）
+  smtp_server: "smtp.126.com"            # SMTP 服务器地址
+  smtp_port: 587                             # SMTP 端口（587为TLS，465为SSL）
+  auth_code: "WWsQwZ7XZ24QrMjD"       # 授权码（通常是应用专用密码）
+  encryption: "TLS"                          # 加密方式（"SSL" 或 "TLS"）
+  sender_name: "reschen's Send_Message_Server"                   # 发件人昵称（可选）
