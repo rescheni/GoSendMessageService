@@ -19,6 +19,27 @@ type Config struct {
 		Encryption   string `yaml:"encryption"`
 		SenderName   string `yaml:"sender_name"`
 	} `yaml:"email"`
+	ServerJiang struct {
+		ServerJiangKey  string `yaml:"server_jiang_key"`
+		ServerJiangDesp string `yaml:"server_jiang_desp"`
+	} `yaml:"server_jiang"`
+	Feishu struct {
+		FeishuAppId     string `yaml:"feishu_app_id"`
+		FeishuAppSecret string `yaml:"feishu_app_secret"`
+		FeishuUserId    string `yaml:"feishu_user_id"`
+	} `yaml:"feishu"`
+	DingDing struct {
+		AccessToken string `yaml:"access_token"`
+	} `yaml:"dingding"`
+	WxPusher struct {
+		WxPusherKey string `yaml:"wx_push_key"`
+		DefaultUid  string `yaml:"default_uid"`
+	} `yaml:"wx_push"`
+	Napcat struct {
+		NapcatUrl   string `yaml:"napcat_url"`
+		NapcatToken string `yaml:"napcat_token"`
+		NapcatQQ    string `yaml:"napcat_qq"`
+	} `yaml:"napcat"`
 }
 
 var (

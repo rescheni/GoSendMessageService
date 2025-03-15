@@ -10,12 +10,12 @@ import (
 )
 
 // EmailSend 用于发送邮件
-func EmailSend(sendTo []string) {
-	emailTest(sendTo)
+func EmailSend(sendTo []string, message string, subject string) {
+	emailTest(sendTo, message, subject)
 }
 
 // emailTest 发送测试邮件
-func emailTest(sendTo []string) {
+func emailTest(sendTo []string, message string, subject string) {
 	// 加载配置
 	cfg := basic.LoadConfig()
 
@@ -28,9 +28,9 @@ func emailTest(sendTo []string) {
 	m := gomail.NewMessage()
 	m.SetHeader("From", userName)
 	m.SetHeader("To", sendTo...)
-	m.SetHeader("Subject", "Email Send Test")
-	m.SetBody("text/plain", "Text Body is, of course, supported!")
-	m.SetBody("text/html", "<h1>This a test email</h1>")
+	m.SetHeader("Subject", subject)
+	m.SetBody("text/plain", message)
+	m.SetBody("text/html", message)
 
 	// 创建一个新的 gomail.Dialer 对象，它支持 SSL/TLS
 	dialer := gomail.NewDialer(host, port, userName, password)
