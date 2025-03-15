@@ -15,7 +15,7 @@ func main() {
 	fmt.Println("Starting the scheduler...")
 	// go daemon.StartDailyScheduler()
 
-	sendserver.SendQQUserMessage(yiyanAPI.GetSentence(11), "1413024330")
+	sendserver.Send_group_msg(yiyanAPI.GetSentence(11), "123456")
 	// 防止主线程退出
 	// select {}
 }

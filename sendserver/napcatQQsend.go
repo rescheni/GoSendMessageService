@@ -82,17 +82,39 @@ func Send_group_msg(message string, groupID string) {
 	url := "/send_group_msg"
 	method := "POST"
 
-	payload := strings.NewReader(`{
-    "group_id": "123456",
-    "message": [
-        {
-            "type": "text",
-            "data": {
-                "text": "napcat"
-            }
-        }
-    ]
-}`)
+	type MessageData struct {
+		Text string `json:"text"`
+	}
+
+	type Message struct {
+		Type string      `json:"type"`
+		Data MessageData `json:"data"`
+	}
+
+	type PayloadStruct struct {
+		GroupID string    `json:"group_id"`
+		Message []Message `json:"message"`
+	}
+
+	payloadData := PayloadStruct{
+		GroupID: groupID,
+		Message: []Message{
+			{
+				Type: "text",
+				Data: MessageData{
+					Text: message,
+				},
+			},
+		},
+	}
+
+	jsonData, err := json.Marshal(payloadData)
+	if err != nil {
+		fmt.Println("JSON编码错误:", err)
+		return
+	}
+
+	payload := strings.NewReader(string(jsonData))
 
 	client := &http.Client{}
 	req, err := http.NewRequest(method, url, payload)
