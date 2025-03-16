@@ -15,7 +15,7 @@ type TextMessage struct {
 	Text string `json:"text"`
 }
 
-func ServerFeiShu(text string, desp string) {
+func FeiShuSend(text string, desp string) {
 	// 创建 Client
 	// client := lark.NewClient("YOUR_APP_ID", "YOUR_APP_SECRET")
 

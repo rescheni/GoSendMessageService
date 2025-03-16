@@ -40,9 +40,9 @@ func StartDailyScheduler() {
 	// sendserver.EmailSend([]string{"1413024330@qq.com"}, emailContent, "Fate")
 	// sendserver.ServerJiang("Fate", emailContent)
 	// sendserver.ServerFeiShu("Fate", emailContent)
-	// sendserver.DingServer(emailContent)
-	sendserver.WxPusherCreateQRCode()
-	sendserver.SendWxPusher("Fate", emailContent)
-	sendserver.WxPusherUserList()
+	sendserver.DingServer(emailContent)
+	// sendserver.WxPusherCreateQRCode()
+	// sendserver.SendWxPusher("Fate", emailContent)
+	// sendserver.WxPusherUserList()
 
 }

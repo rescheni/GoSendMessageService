@@ -1,4 +1,14 @@
 # 设置 邮件服务
+
+# 设置api
+api:
+  api_port: 8080
+  api_host: "0.0.0.0"
+  api_path: "/api"
+  api_body: "json"
+  api_key: "1234567890"
+
+
 email:
   email_address: "reschen@126.com"    # 邮箱地址
   username: "reschen@126.com"         # 邮箱用户名（通常和邮箱地址相同）

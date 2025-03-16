@@ -40,6 +40,13 @@ type Config struct {
 		NapcatToken string `yaml:"napcat_token"`
 		NapcatQQ    string `yaml:"napcat_qq"`
 	} `yaml:"napcat"`
+	Api struct {
+		ApiPort int    `yaml:"api_port"`
+		ApiHost string `yaml:"api_host"`
+		ApiPath string `yaml:"api_path"`
+		ApiBody string `yaml:"api_body"`
+		ApiKey  string `yaml:"api_key"`
+	} `yaml:"api"`
 }
 
 var (

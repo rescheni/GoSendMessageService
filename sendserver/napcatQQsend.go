@@ -79,7 +79,9 @@ func Send_private_msg(message string, userID string) {
 
 func Send_group_msg(message string, groupID string) {
 
-	url := "/send_group_msg"
+	cfg := basic.LoadConfig()
+
+	url := cfg.Napcat.NapcatUrl + "/send_group_msg"
 	method := "POST"
 
 	type MessageData struct {
@@ -124,6 +126,7 @@ func Send_group_msg(message string, groupID string) {
 		return
 	}
 	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Authorization", "Bearer "+cfg.Napcat.NapcatToken)
 
 	res, err := client.Do(req)
 	if err != nil {
