@@ -33,7 +33,7 @@ func main() {
 	// 初始化数据库
 	// TODO
 	// 服务启动通知
-	sendall()
+	// sendall()
 
 	// 开启监听api服务 启动gin
 	api.APIStart()

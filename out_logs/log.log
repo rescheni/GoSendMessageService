@@ -22,3 +22,12 @@
 {"level":"info","msg":"消息发送成功，消息ID: 1411131047\n","time":"2025-03-17T10:12:33+08:00"}
 {"level":"info","msg":"1. 用户ID: UID_DgSOBreg2VgXKN3gQk8pdCQObTN2, 昵称: \n","time":"2025-03-17T10:12:34+08:00"}
 {"level":"info","msg":"2. 用户ID: UID_DgSOBreg2VgXKN3gQk8pdCQObTN2, 昵称: \n","time":"2025-03-17T10:12:34+08:00"}
+{"level":"info","msg":"GoMessageService Start","time":"2025-03-17T14:49:25+08:00"}
+{"level":"error","msg":"Post \"http://reschen.cn:3000/send_private_msg\": dial tcp [240e:345:7134:2300:e2ef:2ff:fe56:e1fd]:3000: connectex: A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond.","time":"2025-03-17T14:51:54+08:00"}
+{"level":"error","msg":"Post \"http://reschen.cn:3000/send_private_msg\": dial tcp [240e:345:7134:2300:e2ef:2ff:fe56:e1fd]:3000: connectex: A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond.","time":"2025-03-17T14:56:14+08:00"}
+{"level":"error","msg":"Post \"http://reschen.cn:3000/send_private_msg\": EOF","time":"2025-03-17T15:08:48+08:00"}
+{"level":"error","msg":"Post \"http://reschen.cn:3000/send_private_msg\": dial tcp [240e:345:7134:2300:e2ef:2ff:fe56:e1fd]:3000: connectex: A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond.","time":"2025-03-17T15:13:36+08:00"}
+{"level":"error","msg":"Post \"http://reschen.cn:3000/send_private_msg\": read tcp 192.168.129.179:12946-\u003e182.32.156.28:3000: wsarecv: An existing connection was forcibly closed by the remote host.","time":"2025-03-17T15:13:37+08:00"}
+{"level":"info","msg":"{\"status\":\"ok\",\"retcode\":0,\"data\":{\"message_id\":853827406},\"message\":\"\",\"wording\":\"\",\"echo\":null}","time":"2025-03-17T15:13:47+08:00"}
+{"level":"info","msg":"{\"status\":\"ok\",\"retcode\":0,\"data\":{\"message_id\":568319665},\"message\":\"\",\"wording\":\"\",\"echo\":null}","time":"2025-03-17T15:13:57+08:00"}
+{"level":"info","msg":"GoMessageService Start","time":"2025-03-17T17:31:11+08:00"}

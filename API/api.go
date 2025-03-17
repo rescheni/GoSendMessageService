@@ -15,6 +15,7 @@ import (
 type MessageRequest struct {
 	ApiKey  string `json:"api_key" binding:"required"`
 	Message string `json:"message" binding:"required"`
+	ToUser  string `json:"to_user,omitempty"`
 	Title   string `json:"title,omitempty"`
 }
 
@@ -25,6 +26,7 @@ type CronRequest struct {
 	EntryID  string `json:"entry_id,omitempty"`
 	Message  string `json:"message" binding:"required"`
 	Title    string `json:"title,omitempty"`
+	ToUser   string `json:"to_user,omitempty"`
 	IsOpen   bool   `json:"is_open"`
 	TaskType string `json:"task_type" binding:"required"` // 任务类型：wxpusher, dingding, server_jiang, email, feishu, napcat_qq
 }
@@ -58,6 +60,13 @@ func APIStart() {
 		cron.GET("/delete", cron_delete)
 		// 获取所有定时任务
 		cron.GET("/list", cron_list)
+	}
+
+	// 登录认证
+	weblogin := router.Group("/login")
+	{
+		weblogin.POST("/user", user_login)
+
 	}
 
 	// myuser := router.Group("/user")
@@ -291,5 +300,14 @@ func cron_list(c *gin.Context) {
 }
 
 func user_login(c *gin.Context) {
+	apiToken := c.Query("api_token") // 修改为 api_token
 
+	cfg := basic.LoadConfig()
+
+	if apiToken != cfg.Api.ApiKey { // 验证 api_token
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid API token"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Login successful"}) // 登录成功响应
 }

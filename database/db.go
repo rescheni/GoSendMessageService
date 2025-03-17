@@ -18,6 +18,7 @@ func InitDB() {
 	}
 
 	// Migrate the schema
-	dg.AutoMigrate(&User{})
+	// 目前没有打算注册账号，所以先注释掉
+	// dg.AutoMigrate(&User{})
 	dg.AutoMigrate(&Cron{})
 }

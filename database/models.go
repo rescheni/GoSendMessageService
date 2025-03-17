@@ -1,11 +1,11 @@
 package database
 
-type User struct {
-	ID       uint   `json:"id" gorm:"primaryKey"`
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Email    string `json:"email"`
-}
+// type User struct {
+// 	ID       uint   `json:"id" gorm:"primaryKey"`
+// 	Username string `json:"username"`
+// 	Password string `json:"password"`
+// 	Email    string `json:"email"`
+// }
 
 type Cron struct {
 	ID       uint   `json:"id" gorm:"primaryKey"`
