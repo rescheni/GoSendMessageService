@@ -1,7 +1,7 @@
 package basic
 
 import (
-	"log"
+	log "GoMessageService/log"
 	"os"
 	"sync"
 
@@ -44,7 +44,6 @@ type Config struct {
 		ApiPort int    `yaml:"api_port"`
 		ApiHost string `yaml:"api_host"`
 		ApiPath string `yaml:"api_path"`
-		ApiBody string `yaml:"api_body"`
 		ApiKey  string `yaml:"api_key"`
 	} `yaml:"api"`
 }
@@ -60,14 +59,14 @@ func LoadConfig() *Config {
 		configInstance = &Config{}
 		file, err := os.Open("Message_main_config.yaml")
 		if err != nil {
-			log.Fatal("Error opening config file: ", err)
+			log.Logger.Fatal("Error opening config file: ", err)
 		}
 		defer file.Close()
 
 		decoder := yaml.NewDecoder(file)
 		err = decoder.Decode(configInstance)
 		if err != nil {
-			log.Fatal("Error decoding config file: ", err)
+			log.Logger.Fatal("Error decoding config file: ", err)
 		}
 	})
 

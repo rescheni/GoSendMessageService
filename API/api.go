@@ -25,6 +25,7 @@ type CronRequest struct {
 	EntryID  string `json:"entry_id,omitempty"`
 	Message  string `json:"message" binding:"required"`
 	Title    string `json:"title,omitempty"`
+	IsOpen   bool   `json:"is_open"`
 	TaskType string `json:"task_type" binding:"required"` // 任务类型：wxpusher, dingding, server_jiang, email, feishu, napcat_qq
 }
 
@@ -49,11 +50,23 @@ func APIStart() {
 	{
 		// 设置定时任务
 		cron.POST("/set", cron_set)
+
+		// 关闭定时任务
+		// cron.GET("/close", cron_close)
+
 		// 删除定时任务
 		cron.GET("/delete", cron_delete)
 		// 获取所有定时任务
 		cron.GET("/list", cron_list)
 	}
+
+	// myuser := router.Group("/user")
+	// {
+	// 	myuser.POST("/login", user_login)
+	// 	myuser.GET("/status", user_status)
+	// 	myuser.POST("/register", user_register)
+	// 	myuser.POST("/logout", user_logout)
+	// }
 
 	router.Run(fmt.Sprintf("%s:%d", apiConfig.ApiHost, apiConfig.ApiPort))
 }
@@ -92,7 +105,7 @@ func send_dingding(c *gin.Context) {
 	}
 
 	// 发送消息
-	sendserver.DingServer(req.Message)
+	sendserver.DingSend(req.Message)
 	c.JSON(http.StatusOK, gin.H{"message": "Message sent successfully"})
 }
 
@@ -188,6 +201,12 @@ func cron_set(c *gin.Context) {
 
 	// 根据任务类型设置不同的定时任务
 	var err error
+
+	if req.IsOpen == false {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid IsOpen format"})
+		return
+	}
+
 	switch req.TaskType {
 	case "wxpusher":
 		err = basic.SetCronTask(req.CronExpr, func() {
@@ -195,7 +214,7 @@ func cron_set(c *gin.Context) {
 		})
 	case "dingding":
 		err = basic.SetCronTask(req.CronExpr, func() {
-			sendserver.DingServer(req.Message)
+			sendserver.DingSend(req.Message)
 		})
 	case "server_jiang":
 		err = basic.SetCronTask(req.CronExpr, func() {
@@ -228,6 +247,11 @@ func cron_set(c *gin.Context) {
 		"cron_expr": req.CronExpr,
 	})
 }
+
+func corn_close(c *gin.Context) {
+
+}
+
 func cron_delete(c *gin.Context) {
 	apiKey := c.Query("api_key")
 	entryIDStr := c.Query("entryid") // 修改为小写 "entryid"
@@ -264,4 +288,8 @@ func cron_list(c *gin.Context) {
 
 	tasks := basic.ListCronTasks()
 	c.JSON(http.StatusOK, gin.H{"tasks": tasks})
+}
+
+func user_login(c *gin.Context) {
+
 }

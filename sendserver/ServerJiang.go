@@ -2,6 +2,7 @@ package sendserver
 
 import (
 	basic "GoMessageService/Basic"
+	log "GoMessageService/log"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -17,7 +18,8 @@ func ServerJiang(text string, desp string) {
 	key := cfg.ServerJiang.ServerJiangKey
 
 	ret := scSend(text, desp, key)
-	fmt.Println(ret)
+	// fmt.Println(ret)
+	log.Logger.Info("server酱LOG : " + ret)
 }
 
 func scSend(text string, desp string, key string) string {

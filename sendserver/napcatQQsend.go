@@ -2,8 +2,8 @@ package sendserver
 
 import (
 	basic "GoMessageService/Basic"
+	log "GoMessageService/log"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -46,7 +46,8 @@ func Send_private_msg(message string, userID string) {
 
 	jsonData, err := json.Marshal(payloadData)
 	if err != nil {
-		fmt.Println("JSON编码错误:", err)
+		// fmt.Println("JSON编码错误:", err)
+		log.Logger.Error("JSON编码错误:", err)
 		return
 	}
 
@@ -56,7 +57,8 @@ func Send_private_msg(message string, userID string) {
 	req, err := http.NewRequest(method, url, payload)
 
 	if err != nil {
-		fmt.Println(err)
+		// fmt.Println(err)
+		log.Logger.Error(err)
 		return
 	}
 	req.Header.Add("Content-Type", "application/json")
@@ -64,17 +66,20 @@ func Send_private_msg(message string, userID string) {
 
 	res, err := client.Do(req)
 	if err != nil {
-		fmt.Println(err)
+		// fmt.Println(err)
+		log.Logger.Error(err)
 		return
 	}
 	defer res.Body.Close()
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		fmt.Println(err)
+		// fmt.Println(err)
+		log.Logger.Error(err)
 		return
 	}
-	fmt.Println(string(body))
+	// fmt.Println(string(body))
+	log.Logger.Info(string(body))
 }
 
 func Send_group_msg(message string, groupID string) {
@@ -112,7 +117,8 @@ func Send_group_msg(message string, groupID string) {
 
 	jsonData, err := json.Marshal(payloadData)
 	if err != nil {
-		fmt.Println("JSON编码错误:", err)
+		// fmt.Println("JSON编码错误:", err)
+		log.Logger.Error("JSON编码错误:", err)
 		return
 	}
 
@@ -122,7 +128,8 @@ func Send_group_msg(message string, groupID string) {
 	req, err := http.NewRequest(method, url, payload)
 
 	if err != nil {
-		fmt.Println(err)
+		// fmt.Println(err)
+		log.Logger.Error(err)
 		return
 	}
 	req.Header.Add("Content-Type", "application/json")
@@ -130,15 +137,18 @@ func Send_group_msg(message string, groupID string) {
 
 	res, err := client.Do(req)
 	if err != nil {
-		fmt.Println(err)
+		// fmt.Println(err)
+		log.Logger.Error(err)
 		return
 	}
 	defer res.Body.Close()
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		fmt.Println(err)
+		// fmt.Println(err)
+		log.Logger.Error(err)
 		return
 	}
-	fmt.Println(string(body))
+	// fmt.Println(string(body))
+	log.Logger.Info(string(body))
 }

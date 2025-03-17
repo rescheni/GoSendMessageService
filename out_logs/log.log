@@ -1,0 +1,12 @@
+{"level":"info","msg":"GoMessageService Start","time":"2025-03-17T10:02:10+08:00"}
+{"level":"info","msg":"Attempting to connect to SMTP server: %s:%d\nsmtp.126.com587","time":"2025-03-17T10:02:10+08:00"}
+{"level":"info","msg":"Username: %s\nreschen@126.com","time":"2025-03-17T10:02:10+08:00"}
+{"level":"info","msg":"Email sent successfully!","time":"2025-03-17T10:02:11+08:00"}
+{"level":"info","msg":"server酱LOG : {\"code\":0,\"message\":\"\",\"data\":{\"pushid\":\"195359027\",\"readkey\":\"SCTNAPVOjlk23Yu\",\"error\":\"SUCCESS\",\"errno\":0}}","time":"2025-03-17T10:02:12+08:00"}
+{"level":"info","msg":"发送的内容: %s\n[123 34 116 101 120 116 34 58 34 92 117 48 48 51 99 98 92 117 48 48 51 101 232 191 153 230 152 175 228 184 128 229 176 129 230 181 139 232 175 149 233 130 174 228 187 182 239 188 140 71 111 77 101 115 115 97 103 101 83 101 114 118 105 99 101 229 183 178 231 187 143 229 144 175 229 138 168 32 92 110 92 117 48 48 51 99 47 98 92 117 48 48 51 101 34 125]","time":"2025-03-17T10:02:12+08:00"}
+{"level":"info","msg":"二维码创建成功:\n","time":"2025-03-17T10:02:13+08:00"}
+{"level":"info","msg":"- 二维码地址: %s\nhttps://wxpusher.zjiecode.com/api/qrcode/67YUIzYp0fxseEoacZBQfvZwwKJzbPTHbFRlp0hZ6ArZ5K1NKHj3hAy6IiN94mVV.jpg","time":"2025-03-17T10:02:13+08:00"}
+{"level":"info","msg":"- 二维码图片: %s\nhttps://wxpusher.zjiecode.com/api/qrcode/67YUIzYp0fxseEoacZBQfvZwwKJzbPTHbFRlp0hZ6ArZ5K1NKHj3hAy6IiN94mVV.jpg","time":"2025-03-17T10:02:13+08:00"}
+{"level":"info","msg":"消息发送成功，消息ID: %d\n1411110495","time":"2025-03-17T10:02:13+08:00"}
+{"level":"info","msg":"%d. 用户ID: %s, 昵称: %s\n1UID_DgSOBreg2VgXKN3gQk8pdCQObTN2","time":"2025-03-17T10:02:14+08:00"}
+{"level":"info","msg":"%d. 用户ID: %s, 昵称: %s\n2UID_DgSOBreg2VgXKN3gQk8pdCQObTN2","time":"2025-03-17T10:02:14+08:00"}

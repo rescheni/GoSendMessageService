@@ -2,6 +2,7 @@ package sendserver
 
 import (
 	basic "GoMessageService/Basic"
+	log "GoMessageService/log"
 	"fmt"
 
 	"github.com/wxpusher/wxpusher-sdk-go"
@@ -23,14 +24,16 @@ func SendWxPusher(title, content string) {
 	// 发送消息
 	msgArr, err := wxpusher.SendMessage(msg)
 	if err != nil {
-		fmt.Printf("发送消息失败: %v\n", err)
+		// fmt.Printf("发送消息失败: %v\n", err)
+		log.Logger.Error(fmt.Sprintf("发送消息失败: %v\n", err))
 		return
 	}
 
 	if len(msgArr) > 0 {
 		mid := msgArr[0].MessageId
 		WxPusherState(mid)
-		fmt.Printf("消息发送成功，消息ID: %d\n", mid)
+		// fmt.Printf("消息发送成功，消息ID: %d\n", mid)
+		log.Logger.Info(fmt.Sprintf("消息发送成功，消息ID: %d\n", mid))
 	}
 }
 
@@ -38,7 +41,8 @@ func SendWxPusher(title, content string) {
 func WxPusherState(messageId int) {
 	status, err := wxpusher.QueryMessageStatus(messageId)
 	if err != nil {
-		fmt.Printf("查询消息状态失败: %v\n", err)
+		// fmt.Printf("查询消息状态失败: %v\n", err)
+		log.Logger.Error(fmt.Sprintf("查询消息状态失败: %v\n", err))
 		return
 	}
 	fmt.Printf("消息状态: %+v\n", status)
@@ -57,13 +61,18 @@ func WxPusherCreateQRCode() {
 
 	qrcodeResp, err := wxpusher.CreateQrcode(&qrcode)
 	if err != nil {
-		fmt.Printf("创建二维码失败: %v\n", err)
+		// fmt.Printf("创建二维码失败: %v\n", err)
+		log.Logger.Error(fmt.Sprintf("创建二维码失败: %v\n", err))
 		return
 	}
 
-	fmt.Printf("二维码创建成功:\n")
-	fmt.Printf("- 二维码地址: %s\n", qrcodeResp.Url)
-	fmt.Printf("- 二维码图片: %s\n", qrcodeResp.ShortUrl)
+	// fmt.Printf("二维码创建成功:\n")
+	// fmt.Printf("- 二维码地址: %s\n", qrcodeResp.Url)
+	// fmt.Printf("- 二维码图片: %s\n", qrcodeResp.ShortUrl)
+	log.Logger.Info("二维码创建成功:\n")
+	log.Logger.Info(fmt.Sprintf("- 二维码地址: %s\n", qrcodeResp.Url))
+	log.Logger.Info(fmt.Sprintf("- 二维码图片: %s\n", qrcodeResp.ShortUrl))
+
 }
 
 // WxPusherUserList 获取用户列表
@@ -73,13 +82,15 @@ func WxPusherUserList() {
 
 	result, err := wxpusher.QueryWxUser(appToken, 1, 20)
 	if err != nil {
-		fmt.Printf("获取用户列表失败: %v\n", err)
+		// fmt.Printf("获取用户列表失败: %v\n", err)
+		log.Logger.Error(fmt.Sprintf("获取用户列表失败: %v\n", err))
 		return
 	}
 
 	fmt.Printf("用户列表:\n")
 	for i, user := range result.Records {
-		fmt.Printf("%d. 用户ID: %s, 昵称: %s\n", i+1, user.UId, user.NickName)
+		// fmt.Printf("%d. 用户ID: %s, 昵称: %s\n", i+1, user.UId, user.NickName)
+		log.Logger.Info(fmt.Sprintf("%d. 用户ID: %s, 昵称: %s\n", i+1, user.UId, user.NickName))
 	}
 }
 

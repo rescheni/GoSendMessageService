@@ -2,6 +2,7 @@ package sendserver
 
 import (
 	basic "GoMessageService/Basic"
+	log "GoMessageService/log"
 	"fmt"
 
 	"crypto/tls"
@@ -38,13 +39,17 @@ func emailTest(sendTo []string, message string, subject string) {
 	dialer.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 
 	// 打印连接信息
-	fmt.Printf("Attempting to connect to SMTP server: %s:%d\n", host, port)
-	fmt.Printf("Username: %s\n", userName)
+	// fmt.Printf("Attempting to connect to SMTP server: %s:%d\n", host, port)
+	log.Logger.Info(fmt.Sprintf("Attempting to connect to SMTP server: %s:%d\n", host, port))
+	// fmt.Printf("Username: %s\n", userName)
+	log.Logger.Info(fmt.Sprintf("Username: %s\n", userName))
 
 	// 使用 Dialer 发送邮件
 	if err := dialer.DialAndSend(m); err != nil {
-		fmt.Printf("Error sending email: %v\n", err)
+		// fmt.Printf("Error sending email: %v\n", err)
+		log.Logger.Error(fmt.Sprintf("Error sending email: %v\n", err))
 	} else {
-		fmt.Println("Email sent successfully!")
+		// fmt.Println("Email sent successfully!")
+		log.Logger.Info("Email sent successfully!")
 	}
 }

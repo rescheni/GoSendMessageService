@@ -2,6 +2,7 @@ package sendserver
 
 import (
 	basic "GoMessageService/Basic"
+	log "GoMessageService/log"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -31,12 +32,14 @@ func FeiShuSend(text string, desp string) {
 	msg := TextMessage{Text: "<b>" + desp + "</b>"}
 	content, err := json.Marshal(msg)
 	if err != nil {
-		fmt.Printf("JSON 编码错误: %v\n", err)
+		// fmt.Printf("JSON 编码错误: %v\n", err)
+		log.Logger.Error(fmt.Sprintf("JSON 编码错误: %v\n", err))
 		return
 	}
 
-	fmt.Printf("发送的内容: %s\n", content)
-	fmt.Println("--------------------------------")
+	// fmt.Printf("发送的内容: %s\n", content)
+	log.Logger.Info(fmt.Sprintf("发送的内容: %s\n", content))
+	// fmt.Println("--------------------------------")
 
 	// 创建请求对象
 	req := larkim.NewCreateMessageReqBuilder().
@@ -53,13 +56,16 @@ func FeiShuSend(text string, desp string) {
 
 	// 处理错误
 	if err != nil {
-		fmt.Println(err)
+		// fmt.Println(err)
+		log.Logger.Error(err)
 		return
 	}
 
 	// 服务端错误处理
 	if !resp.Success() {
-		fmt.Printf("logId: %s, error response: \n%s", resp.RequestId, larkcore.Prettify(resp.CodeError))
+		// fmt.Printf("logId: %s, error response: \n%s", resp.RequestId, larkcore.Prettify(resp.CodeError))
+		log.Logger.Error(fmt.Sprintf("logId: %s, error response: \n%s", resp.RequestId, larkcore.Prettify(resp.CodeError)))
+
 		return
 	}
 

@@ -1,9 +1,9 @@
 package yiyanAPI
 
 import (
+	log "GoMessageService/log"
 	"encoding/json"
 	"io"
-	"log"
 	"net/http"
 )
 
@@ -67,26 +67,26 @@ func GetSentence(sentenceType int) string {
 
 	req, err := http.NewRequest("GET", "https://v1.hitokoto.cn/?encode=json"+settype, nil)
 	if err != nil {
-		log.Fatal(err)
+		log.Logger.Fatal(err)
 	}
 	req.Header.Set("accept", "application/json")
 	req.Header.Set("accept-language", "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7")
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		log.Fatal(err)
+		log.Logger.Fatal(err)
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatal(err)
+		log.Logger.Fatal(err)
 	}
 
 	var sentence Sentence
 	err = json.Unmarshal(body, &sentence)
 	if err != nil {
-		log.Fatal(err)
+		log.Logger.Fatal(err)
 	}
 
 	return sentence.Hitokoto + "------" + sentence.FromWho + "------" + sentence.From + "\n"
