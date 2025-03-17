@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-func ServerJiang(text string, desp string) {
+func SendServerJiang(text string, desp string) {
 
 	cfg := basic.LoadConfig()
 

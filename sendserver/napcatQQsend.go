@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func Send_private_msg(message string, userID string) {
+func SendQQPrivateMsg(message string, userID string) {
 
 	cfg := basic.LoadConfig()
 
@@ -82,7 +82,7 @@ func Send_private_msg(message string, userID string) {
 	log.Logger.Info(string(body))
 }
 
-func Send_group_msg(message string, groupID string) {
+func SendQQGroupMessage(message string, groupID string) {
 
 	cfg := basic.LoadConfig()
 

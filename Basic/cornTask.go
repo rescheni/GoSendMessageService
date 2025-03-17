@@ -32,7 +32,6 @@ func SetCronTask(cronExpr string, task func()) error {
 	if err != nil {
 		return err
 	}
-
 	// 更新任务列表
 	cronMutex.Lock()
 	cronTasks[entryID] = cronExpr

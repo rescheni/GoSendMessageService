@@ -2,6 +2,7 @@ package api
 
 import (
 	basic "GoMessageService/Basic"
+	"GoMessageService/database"
 	"GoMessageService/sendserver"
 	"fmt"
 	"net/http"
@@ -27,7 +28,7 @@ type CronRequest struct {
 	Message  string `json:"message" binding:"required"`
 	Title    string `json:"title,omitempty"`
 	ToUser   string `json:"to_user,omitempty"`
-	IsOpen   bool   `json:"is_open"`
+	IsOpen   bool   `json:"is_open"`                      // 修改 JSON 标签为小写 is_open
 	TaskType string `json:"task_type" binding:"required"` // 任务类型：wxpusher, dingding, server_jiang, email, feishu, napcat_qq
 }
 
@@ -114,7 +115,7 @@ func send_dingding(c *gin.Context) {
 	}
 
 	// 发送消息
-	sendserver.DingSend(req.Message)
+	sendserver.SendDing(req.Title, req.Message)
 	c.JSON(http.StatusOK, gin.H{"message": "Message sent successfully"})
 }
 
@@ -133,7 +134,7 @@ func send_server_jiang(c *gin.Context) {
 	}
 
 	// 发送消息
-	sendserver.ServerJiang(req.Title, req.Message)
+	sendserver.SendServerJiang(req.Title, req.Message)
 	c.JSON(http.StatusOK, gin.H{"message": "Message sent successfully"})
 }
 
@@ -152,7 +153,7 @@ func send_email(c *gin.Context) {
 	}
 
 	// 发送消息
-	sendserver.EmailSend([]string{cfg.Email.EmailAddress}, req.Message, req.Title)
+	sendserver.SendEmail([]string{cfg.Email.EmailAddress}, req.Message, req.Title)
 	c.JSON(http.StatusOK, gin.H{"message": "Message sent successfully"})
 }
 
@@ -171,7 +172,7 @@ func send_feishu(c *gin.Context) {
 	}
 
 	// 发送消息
-	sendserver.FeiShuSend(req.Title, req.Message)
+	sendserver.SendFeiShu(req.Title, req.Message)
 	c.JSON(http.StatusOK, gin.H{"message": "Message sent successfully"})
 }
 
@@ -190,7 +191,7 @@ func send_napcat_qq(c *gin.Context) {
 	}
 
 	// 发送消息
-	sendserver.Send_private_msg(req.Message, "1413024330")
+	sendserver.SendQQPrivateMsg(req.Message, "1413024330")
 	c.JSON(http.StatusOK, gin.H{"message": "Message sent successfully"})
 }
 
@@ -216,6 +217,25 @@ func cron_set(c *gin.Context) {
 		return
 	}
 
+	var inCron database.Cron
+	// 检查是否存在重复的 EntryID
+	entryID, err := strconv.Atoi(req.EntryID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid EntryID format"})
+		return
+	}
+	inCron.ID = uint(entryID)
+	inCron.CronExpr = req.CronExpr // 任务表达式
+	inCron.EntryID = req.EntryID   // 任务 ID
+	inCron.Message = req.Message   // 消息内容
+	inCron.Title = req.Title       // 消息标题
+	inCron.TaskType = req.TaskType // 任务类型
+	inCron.Status = req.IsOpen     // 任务状态
+	inCron.ApiKey = req.ApiKey     // API Key
+
+	// 保存到数据库
+	database.InsertCron(&inCron)
+
 	switch req.TaskType {
 	case "wxpusher":
 		err = basic.SetCronTask(req.CronExpr, func() {
@@ -223,23 +243,23 @@ func cron_set(c *gin.Context) {
 		})
 	case "dingding":
 		err = basic.SetCronTask(req.CronExpr, func() {
-			sendserver.DingSend(req.Message)
+			sendserver.SendDing(req.Title, req.Message)
 		})
 	case "server_jiang":
 		err = basic.SetCronTask(req.CronExpr, func() {
-			sendserver.ServerJiang(req.Title, req.Message)
+			sendserver.SendServerJiang(req.Title, req.Message)
 		})
 	case "email":
 		err = basic.SetCronTask(req.CronExpr, func() {
-			sendserver.EmailSend([]string{cfg.Email.EmailAddress}, req.Message, req.Title)
+			sendserver.SendEmail([]string{cfg.Email.EmailAddress}, req.Message, req.Title)
 		})
 	case "feishu":
 		err = basic.SetCronTask(req.CronExpr, func() {
-			sendserver.FeiShuSend(req.Title, req.Message)
+			sendserver.SendFeiShu(req.Title, req.Message)
 		})
 	case "napcat_qq":
 		err = basic.SetCronTask(req.CronExpr, func() {
-			sendserver.Send_private_msg(req.Message, "1413024330")
+			sendserver.SendQQPrivateMsg(req.Message, "1413024330")
 		})
 	default:
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid task type"})
@@ -257,6 +277,7 @@ func cron_set(c *gin.Context) {
 	})
 }
 
+// TODO
 func corn_close(c *gin.Context) {
 
 }
@@ -278,6 +299,9 @@ func cron_delete(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid EntryID format"})
 		return
 	}
+
+	database.DeleteCron(entryIDStr)
+
 	if basic.DeleteCronTask(cron.EntryID(entryID)) {
 		c.JSON(http.StatusOK, gin.H{"message": "Cron task deleted successfully"})
 	} else {

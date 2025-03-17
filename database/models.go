@@ -1,5 +1,11 @@
 package database
 
+import (
+	basic "GoMessageService/Basic"
+	log "GoMessageService/log"
+	"GoMessageService/sendserver"
+)
+
 // type User struct {
 // 	ID       uint   `json:"id" gorm:"primaryKey"`
 // 	Username string `json:"username"`
@@ -7,6 +13,8 @@ package database
 // 	Email    string `json:"email"`
 // }
 
+// cuncron 定时任务结构
+// 数据持久化 cron 表
 type Cron struct {
 	ID       uint   `json:"id" gorm:"primaryKey"`
 	ApiKey   string `json:"api" binding:"required"`
@@ -16,7 +24,34 @@ type Cron struct {
 	Title    string `json:"title,omitempty"`
 	TaskType string `json:"task_type" binding:"required"` // 任务类型：wxpusher, dingding, server_jiang, email, feishu, napcat_qq
 	// 任务状态：0-未启动，1-已启动
-	Status int `json:"status"`
+	Status bool `json:"status"`
 	// 所属用户
 	ByUserId int `json:"by_user_id"`
+}
+
+func LoadCornTaskOnDb() {
+
+	log.Logger.Info("加载定时任务")
+
+	crons := GetCronList()
+	for _, cron := range crons {
+
+		// 设置定时任务
+		basic.SetCronTask(cron.CronExpr, func() {
+			switch cron.TaskType {
+			case "wxpusher":
+				sendserver.SendWxPusher(cron.Title, cron.Message)
+			case "dingding":
+				sendserver.SendDing(cron.Title, cron.Message)
+			case "server_jiang":
+				sendserver.SendServerJiang(cron.Title, cron.Message)
+			case "email":
+				sendserver.SendEmail([]string{"14130243430@qq.com"}, cron.Message, cron.Title)
+			case "feishu":
+				sendserver.SendFeiShu(cron.Title, cron.Message)
+			case "napcat_qq":
+				sendserver.SendQQPrivateMsg(cron.Message, "1413024330")
+			}
+		})
+	}
 }

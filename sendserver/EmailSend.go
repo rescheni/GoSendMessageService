@@ -10,8 +10,8 @@ import (
 	"gopkg.in/gomail.v2"
 )
 
-// EmailSend 用于发送邮件
-func EmailSend(sendTo []string, message string, subject string) {
+// SendEmail 用于发送邮件
+func SendEmail(sendTo []string, message string, subject string) {
 	emailTest(sendTo, message, subject)
 }
 

@@ -3,6 +3,7 @@ package main
 import (
 	api "GoMessageService/API"
 	basic "GoMessageService/Basic"
+	"GoMessageService/database"
 	log "GoMessageService/log"
 	"GoMessageService/sendserver"
 )
@@ -16,10 +17,10 @@ func sendall() {
 	title := "GoMessageService Start"
 	emailContent := "这是一封测试邮件，GoMessageService已经启动 \n"
 	// 发送消息
-	sendserver.EmailSend([]string{"1413024330@qq.com"}, emailContent, title)
-	sendserver.ServerJiang(title, emailContent)
-	sendserver.FeiShuSend(title, emailContent)
-	sendserver.DingSend(emailContent)
+	sendserver.SendEmail([]string{"1413024330@qq.com"}, emailContent, title)
+	sendserver.SendServerJiang(title, emailContent)
+	sendserver.SendFeiShu(title, emailContent)
+	sendserver.SendDing(title, emailContent)
 	sendserver.WxPusherCreateQRCode()
 	sendserver.SendWxPusher(title, emailContent)
 	sendserver.WxPusherUserList()
@@ -31,7 +32,10 @@ func main() {
 	log.Logger.Info("GoMessageService Start")
 
 	// 初始化数据库
-	// TODO
+	database.InitDB()
+	// 加载定时任务
+	database.LoadCornTaskOnDb()
+
 	// 服务启动通知
 	// sendall()
 

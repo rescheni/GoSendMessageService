@@ -16,7 +16,7 @@ type TextMessage struct {
 	Text string `json:"text"`
 }
 
-func FeiShuSend(text string, desp string) {
+func SendFeiShu(title string, desp string) {
 	// 创建 Client
 	// client := lark.NewClient("YOUR_APP_ID", "YOUR_APP_SECRET")
 
@@ -29,7 +29,7 @@ func FeiShuSend(text string, desp string) {
 	client := lark.NewClient(appId, appSecret)
 
 	// 使用 json 库处理消息内容
-	msg := TextMessage{Text: "<b>" + desp + "</b>"}
+	msg := TextMessage{Text: title + "<br>" + "<b>" + desp + "</b>"}
 	content, err := json.Marshal(msg)
 	if err != nil {
 		// fmt.Printf("JSON 编码错误: %v\n", err)
@@ -57,6 +57,7 @@ func FeiShuSend(text string, desp string) {
 	// 处理错误
 	if err != nil {
 		// fmt.Println(err)
+		// log.Logger.Error(err)
 		log.Logger.Error(err)
 		return
 	}
@@ -70,5 +71,6 @@ func FeiShuSend(text string, desp string) {
 	}
 
 	// 业务处理
-	fmt.Println(larkcore.Prettify(resp))
+	// fmt.Println(larkcore.Prettify(resp))
+	log.Logger.Info(larkcore.Prettify(resp))
 }

@@ -15,7 +15,7 @@ type Message struct {
 	} `json:"text"`
 }
 
-func DingSend(content string) {
+func SendDing(title, content string) {
 	cfg := basic.LoadConfig()
 	webhookURL := "https://oapi.dingtalk.com/robot/send?access_token=" + cfg.DingDing.AccessToken
 
@@ -24,7 +24,7 @@ func DingSend(content string) {
 		Text: struct {
 			Content string `json:"content"`
 		}{
-			Content: content,
+			Content: title + "\n" + content,
 		},
 	}
 
