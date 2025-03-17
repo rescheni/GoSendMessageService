@@ -10,3 +10,15 @@
 {"level":"info","msg":"消息发送成功，消息ID: %d\n1411110495","time":"2025-03-17T10:02:13+08:00"}
 {"level":"info","msg":"%d. 用户ID: %s, 昵称: %s\n1UID_DgSOBreg2VgXKN3gQk8pdCQObTN2","time":"2025-03-17T10:02:14+08:00"}
 {"level":"info","msg":"%d. 用户ID: %s, 昵称: %s\n2UID_DgSOBreg2VgXKN3gQk8pdCQObTN2","time":"2025-03-17T10:02:14+08:00"}
+{"level":"info","msg":"GoMessageService Start","time":"2025-03-17T10:12:31+08:00"}
+{"level":"info","msg":"Attempting to connect to SMTP server: smtp.126.com:587\n","time":"2025-03-17T10:12:31+08:00"}
+{"level":"info","msg":"Username: reschen@126.com\n","time":"2025-03-17T10:12:31+08:00"}
+{"level":"info","msg":"Email sent successfully!","time":"2025-03-17T10:12:31+08:00"}
+{"level":"info","msg":"server酱LOG : {\"code\":0,\"message\":\"\",\"data\":{\"pushid\":\"195359992\",\"readkey\":\"SCTH3FUeNNRYRFu\",\"error\":\"SUCCESS\",\"errno\":0}}","time":"2025-03-17T10:12:32+08:00"}
+{"level":"info","msg":"发送的内容: {\"text\":\"\\u003cb\\u003e这是一封测试邮件，GoMessageService已经启动 \\n\\u003c/b\\u003e\"}\n","time":"2025-03-17T10:12:32+08:00"}
+{"level":"info","msg":"二维码创建成功:\n","time":"2025-03-17T10:12:33+08:00"}
+{"level":"info","msg":"- 二维码地址: https://wxpusher.zjiecode.com/api/qrcode/6VVk4qSCXIU97QaMxhMKDdzN3J4tY1k9huQzguClweR93dHlOSZa087NWpJG53RE.jpg\n","time":"2025-03-17T10:12:33+08:00"}
+{"level":"info","msg":"- 二维码图片: https://wxpusher.zjiecode.com/api/qrcode/6VVk4qSCXIU97QaMxhMKDdzN3J4tY1k9huQzguClweR93dHlOSZa087NWpJG53RE.jpg\n","time":"2025-03-17T10:12:33+08:00"}
+{"level":"info","msg":"消息发送成功，消息ID: 1411131047\n","time":"2025-03-17T10:12:33+08:00"}
+{"level":"info","msg":"1. 用户ID: UID_DgSOBreg2VgXKN3gQk8pdCQObTN2, 昵称: \n","time":"2025-03-17T10:12:34+08:00"}
+{"level":"info","msg":"2. 用户ID: UID_DgSOBreg2VgXKN3gQk8pdCQObTN2, 昵称: \n","time":"2025-03-17T10:12:34+08:00"}
