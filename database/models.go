@@ -46,7 +46,7 @@ func LoadCornTaskOnDb() {
 			case "server_jiang":
 				sendserver.SendServerJiang(cron.Title, cron.Message)
 			case "email":
-				sendserver.SendEmail([]string{"14130243430@qq.com"}, cron.Message, cron.Title)
+				sendserver.SendEmail([]string{"14130243430@qq.com"}, cron.Title, cron.Message)
 			case "feishu":
 				sendserver.SendFeiShu(cron.Title, cron.Message)
 			case "napcat_qq":

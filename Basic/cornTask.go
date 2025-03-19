@@ -1,3 +1,4 @@
+// cron 库的封装
 package basic
 
 import (
@@ -7,10 +8,10 @@ import (
 )
 
 var (
-	cronInstance *cron.Cron
-	cronTasks    = make(map[cron.EntryID]string)
-	cronMutex    sync.RWMutex
-	cronOnce     sync.Once
+	cronInstance *cron.Cron                      // 全局 cron 实例
+	cronTasks    = make(map[cron.EntryID]string) // 通过 entryID 来获取 cron 表达式
+	cronMutex    sync.RWMutex                    // 使用读写锁
+	cronOnce     sync.Once                       // 保证 cronInstance 只被初始化一次
 )
 
 // 返回一个支持至 秒 级别的 cron

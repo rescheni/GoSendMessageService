@@ -1,6 +1,7 @@
 package log
 
 import (
+	basic "GoMessageService/Basic"
 	"io"
 	"os"
 
@@ -12,6 +13,9 @@ import (
 var Logger *logrus.Logger
 
 func init() {
+
+	cfg := basic.LoadConfig()
+
 	Logger = logrus.New()
 
 	// 设置日志格式（JSON / 文本）
@@ -23,11 +27,11 @@ func init() {
 
 	// 设置日志输出：文件 + 控制台
 	fileOutput := &lumberjack.Logger{
-		Filename:   "out_logs/log.log", // 日志文件路径
-		MaxSize:    10,                 // 最大 10MB
-		MaxBackups: 5,                  // 最多保留 5 个日志文件
-		MaxAge:     30,                 // 保留 30 天
-		Compress:   true,               // 是否压缩
+		Filename:   cfg.Log.LogPath, // 日志文件路径
+		MaxSize:    10,              // 最大 10MB
+		MaxBackups: 5,               // 最多保留 5 个日志文件
+		MaxAge:     30,              // 保留 30 天
+		Compress:   true,            // 是否压缩
 	}
 
 	// 使用 MultiWriter 同时输出到文件和控制台

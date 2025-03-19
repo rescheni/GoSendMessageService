@@ -1,32 +1,54 @@
 package database
 
 import (
+	basic "GoMessageService/Basic"
 	log "GoMessageService/log"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
-var dg *gorm.DB
+var dg *gorm.DB //全局的数据库实例
 
+// 获取数据库实例
 func GetDB() *gorm.DB {
 	return dg
 }
 
-func InsertCron(cron *Cron) {
+// 插入cron定时任务
+func InsertCron(cron *Cron) bool {
+	// TODO: 检查cron的有效性
+	// 检查 entryID 是否为空
+	if cron.EntryID == "" {
+		log.Logger.Error("EntryID is empty")
+		return false
+	}
+
+	// 检查 cron ID 是否重复
+	var existingCron Cron
+	result := dg.Where("entry_id = ?", cron.EntryID).First(&existingCron)
+	if result.RowsAffected > 0 {
+		log.Logger.Error("Cron ID already exists", cron.EntryID)
+		return false
+	}
+
 	dg.Create(cron)
+	return true
 }
 
+// 更新cron定时任务  目前没有使用到
 func UpdateCron(cron *Cron) {
 	dg.Save(cron)
 }
 
+// 删除cron定时任务
 func DeleteCron(entryID string) {
 	var cron Cron
 	dg.Where("entry_id = ?", entryID).First(&cron)
 	dg.Delete(cron)
 }
 
+// 获取cron定时任务列表
 func GetCronList() []Cron {
 	var crons []Cron
 	dg.Find(&crons)
@@ -36,6 +58,7 @@ func GetCronList() []Cron {
 	return crons
 }
 
+// 通过id 获取cron定时任务
 func GetCronByID(id int) Cron {
 	var cron Cron
 	dg.First(&cron, id)
@@ -44,8 +67,9 @@ func GetCronByID(id int) Cron {
 
 // InitDB 初始化数据库
 func InitDB() {
+	cfg := basic.LoadConfig()
 	var err error
-	dg, err = gorm.Open(sqlite.Open("cron.db"), &gorm.Config{})
+	dg, err = gorm.Open(sqlite.Open(cfg.Sqlite.Db_path), &gorm.Config{})
 	if err != nil {
 		log.Logger.Fatal("Failed to connect database", err)
 	}

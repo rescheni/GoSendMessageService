@@ -1,36 +1,14 @@
+// 项目api 接口文件
 package api
 
 import (
 	basic "GoMessageService/Basic"
-	"GoMessageService/database"
-	"GoMessageService/sendserver"
+	"GoMessageService/services"
+
 	"fmt"
-	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/robfig/cron/v3"
 )
-
-// MessageRequest 消息请求结构
-type MessageRequest struct {
-	ApiKey  string `json:"api_key" binding:"required"`
-	Message string `json:"message" binding:"required"`
-	ToUser  string `json:"to_user,omitempty"`
-	Title   string `json:"title,omitempty"`
-}
-
-// CronRequest 定时任务请求结构
-type CronRequest struct {
-	ApiKey   string `json:"api_key" binding:"required"`
-	CronExpr string `json:"cron_expr" binding:"required"`
-	EntryID  string `json:"entry_id,omitempty"`
-	Message  string `json:"message" binding:"required"`
-	Title    string `json:"title,omitempty"`
-	ToUser   string `json:"to_user,omitempty"`
-	IsOpen   bool   `json:"is_open"`                      // 修改 JSON 标签为小写 is_open
-	TaskType string `json:"task_type" binding:"required"` // 任务类型：wxpusher, dingding, server_jiang, email, feishu, napcat_qq
-}
 
 func APIStart() {
 	cfg := basic.LoadConfig()
@@ -41,297 +19,33 @@ func APIStart() {
 	send := router.Group("/send")
 	{
 		// 发送消息
-		send.POST("/wxpusher", send_wxpusher)
-		send.POST("/dingding", send_dingding)
-		send.POST("/server_jiang", send_server_jiang)
-		send.POST("/email", send_email)
-		send.POST("/feishu", send_feishu)
-		send.POST("/napcat_qq", send_napcat_qq)
+		send.POST("/wxpusher", services.Send_wxpusher)
+		send.POST("/dingding", services.Send_dingding)
+		send.POST("/server_jiang", services.Send_server_jiang)
+		send.POST("/email", services.Send_email)
+		send.POST("/feishu", services.Send_feishu)
+		send.POST("/napcat_qq", services.Send_napcat_qq)
 	}
 
 	cron := router.Group("/cron")
 	{
 		// 设置定时任务
-		cron.POST("/set", cron_set)
+		cron.POST("/set", services.Cron_set)
 
 		// 关闭定时任务
 		// cron.GET("/close", cron_close)
 
 		// 删除定时任务
-		cron.GET("/delete", cron_delete)
+		cron.GET("/delete", services.Cron_delete)
 		// 获取所有定时任务
-		cron.GET("/list", cron_list)
+		cron.GET("/list", services.Cron_list)
 	}
 
 	// 登录认证
-	weblogin := router.Group("/login")
+	weblogin := router.Group("/user")
 	{
-		weblogin.POST("/user", user_login)
-
+		weblogin.POST("/login", services.User_login)
 	}
-
-	// myuser := router.Group("/user")
-	// {
-	// 	myuser.POST("/login", user_login)
-	// 	myuser.GET("/status", user_status)
-	// 	myuser.POST("/register", user_register)
-	// 	myuser.POST("/logout", user_logout)
-	// }
 
 	router.Run(fmt.Sprintf("%s:%d", apiConfig.ApiHost, apiConfig.ApiPort))
-}
-
-func send_wxpusher(c *gin.Context) {
-	var req MessageRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	// 验证 API Key
-	cfg := basic.LoadConfig()
-	if req.ApiKey != cfg.Api.ApiKey {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid API key"})
-		return
-	}
-
-	// 发送消息
-	sendserver.SendWxPusher(req.Title, req.Message)
-	c.JSON(http.StatusOK, gin.H{"message": "Message sent successfully"})
-}
-
-func send_dingding(c *gin.Context) {
-	var req MessageRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	// 验证 API Key
-	cfg := basic.LoadConfig()
-	if req.ApiKey != cfg.Api.ApiKey {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid API key"})
-		return
-	}
-
-	// 发送消息
-	sendserver.SendDing(req.Title, req.Message)
-	c.JSON(http.StatusOK, gin.H{"message": "Message sent successfully"})
-}
-
-func send_server_jiang(c *gin.Context) {
-	var req MessageRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	// 验证 API Key
-	cfg := basic.LoadConfig()
-	if req.ApiKey != cfg.Api.ApiKey {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid API key"})
-		return
-	}
-
-	// 发送消息
-	sendserver.SendServerJiang(req.Title, req.Message)
-	c.JSON(http.StatusOK, gin.H{"message": "Message sent successfully"})
-}
-
-func send_email(c *gin.Context) {
-	var req MessageRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	// 验证 API Key
-	cfg := basic.LoadConfig()
-	if req.ApiKey != cfg.Api.ApiKey {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid API key"})
-		return
-	}
-
-	// 发送消息
-	sendserver.SendEmail([]string{cfg.Email.EmailAddress}, req.Message, req.Title)
-	c.JSON(http.StatusOK, gin.H{"message": "Message sent successfully"})
-}
-
-func send_feishu(c *gin.Context) {
-	var req MessageRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	// 验证 API Key
-	cfg := basic.LoadConfig()
-	if req.ApiKey != cfg.Api.ApiKey {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid API key"})
-		return
-	}
-
-	// 发送消息
-	sendserver.SendFeiShu(req.Title, req.Message)
-	c.JSON(http.StatusOK, gin.H{"message": "Message sent successfully"})
-}
-
-func send_napcat_qq(c *gin.Context) {
-	var req MessageRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	// 验证 API Key
-	cfg := basic.LoadConfig()
-	if req.ApiKey != cfg.Api.ApiKey {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid API key"})
-		return
-	}
-
-	// 发送消息
-	sendserver.SendQQPrivateMsg(req.Message, "1413024330")
-	c.JSON(http.StatusOK, gin.H{"message": "Message sent successfully"})
-}
-
-func cron_set(c *gin.Context) {
-	var req CronRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	// 验证 API Key
-	cfg := basic.LoadConfig()
-	if req.ApiKey != cfg.Api.ApiKey {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid API key"})
-		return
-	}
-
-	// 根据任务类型设置不同的定时任务
-	var err error
-
-	if req.IsOpen == false {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid IsOpen format"})
-		return
-	}
-
-	var inCron database.Cron
-	// 检查是否存在重复的 EntryID
-	entryID, err := strconv.Atoi(req.EntryID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid EntryID format"})
-		return
-	}
-	inCron.ID = uint(entryID)
-	inCron.CronExpr = req.CronExpr // 任务表达式
-	inCron.EntryID = req.EntryID   // 任务 ID
-	inCron.Message = req.Message   // 消息内容
-	inCron.Title = req.Title       // 消息标题
-	inCron.TaskType = req.TaskType // 任务类型
-	inCron.Status = req.IsOpen     // 任务状态
-	inCron.ApiKey = req.ApiKey     // API Key
-
-	// 保存到数据库
-	database.InsertCron(&inCron)
-
-	switch req.TaskType {
-	case "wxpusher":
-		err = basic.SetCronTask(req.CronExpr, func() {
-			sendserver.SendWxPusher(req.Title, req.Message)
-		})
-	case "dingding":
-		err = basic.SetCronTask(req.CronExpr, func() {
-			sendserver.SendDing(req.Title, req.Message)
-		})
-	case "server_jiang":
-		err = basic.SetCronTask(req.CronExpr, func() {
-			sendserver.SendServerJiang(req.Title, req.Message)
-		})
-	case "email":
-		err = basic.SetCronTask(req.CronExpr, func() {
-			sendserver.SendEmail([]string{cfg.Email.EmailAddress}, req.Message, req.Title)
-		})
-	case "feishu":
-		err = basic.SetCronTask(req.CronExpr, func() {
-			sendserver.SendFeiShu(req.Title, req.Message)
-		})
-	case "napcat_qq":
-		err = basic.SetCronTask(req.CronExpr, func() {
-			sendserver.SendQQPrivateMsg(req.Message, "1413024330")
-		})
-	default:
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid task type"})
-		return
-	}
-
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"message":   "Cron task set successfully",
-		"cron_expr": req.CronExpr,
-	})
-}
-
-// TODO
-func corn_close(c *gin.Context) {
-
-}
-
-func cron_delete(c *gin.Context) {
-	apiKey := c.Query("api_key")
-	entryIDStr := c.Query("entryid") // 修改为小写 "entryid"
-
-	// 验证 API Key
-	cfg := basic.LoadConfig()
-	if apiKey != cfg.Api.ApiKey {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid API key"})
-		return
-	}
-
-	// 删除定时任务
-	entryID, err := strconv.Atoi(entryIDStr)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid EntryID format"})
-		return
-	}
-
-	database.DeleteCron(entryIDStr)
-
-	if basic.DeleteCronTask(cron.EntryID(entryID)) {
-		c.JSON(http.StatusOK, gin.H{"message": "Cron task deleted successfully"})
-	} else {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Cron task not found"})
-	}
-}
-
-func cron_list(c *gin.Context) {
-	apiKey := c.Query("api_key")
-
-	// 验证 API Key
-	cfg := basic.LoadConfig()
-	if apiKey != cfg.Api.ApiKey {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid API key"})
-		return
-	}
-
-	tasks := basic.ListCronTasks()
-	c.JSON(http.StatusOK, gin.H{"tasks": tasks})
-}
-
-func user_login(c *gin.Context) {
-	apiToken := c.Query("api_token") // 修改为 api_token
-
-	cfg := basic.LoadConfig()
-
-	if apiToken != cfg.Api.ApiKey { // 验证 api_token
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid API token"})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"message": "Login successful"}) // 登录成功响应
 }
