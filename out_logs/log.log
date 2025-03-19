@@ -55,3 +55,6 @@
 {"level":"info","msg":"GoMessageService Start","time":"2025-03-19T10:06:08+08:00"}
 {"level":"info","msg":"加载定时任务","time":"2025-03-19T10:06:08+08:00"}
 {"level":"info","msg":"GetCronList[]","time":"2025-03-19T10:06:08+08:00"}
+{"level":"info","msg":"GoMessageService Start","time":"2025-03-19T12:21:39+08:00"}
+{"level":"info","msg":"加载定时任务","time":"2025-03-19T12:21:39+08:00"}
+{"level":"info","msg":"GetCronList[]","time":"2025-03-19T12:21:39+08:00"}
