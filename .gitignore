@@ -1,3 +1,43 @@
 *.yaml
 log/log.log
 plug-in/*
+
+# Next.js 项目忽略规则
+frontEnd/my-next-app/node_modules/
+frontEnd/my-next-app/.pnp
+frontEnd/my-next-app/.pnp.*
+frontEnd/my-next-app/.yarn/*
+!frontEnd/my-next-app/.yarn/patches
+!frontEnd/my-next-app/.yarn/plugins
+!frontEnd/my-next-app/.yarn/releases
+!frontEnd/my-next-app/.yarn/versions
+
+# testing
+frontEnd/my-next-app/coverage/
+
+# next.js
+frontEnd/my-next-app/.next/
+frontEnd/my-next-app/out/
+
+# production
+frontEnd/my-next-app/build/
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+frontEnd/my-next-app/npm-debug.log*
+frontEnd/my-next-app/yarn-debug.log*
+frontEnd/my-next-app/yarn-error.log*
+frontEnd/my-next-app/.pnpm-debug.log*
+
+# env files
+frontEnd/my-next-app/.env*
+
+# vercel
+frontEnd/my-next-app/.vercel/
+
+# typescript
+frontEnd/my-next-app/*.tsbuildinfo
+frontEnd/my-next-app/next-env.d.ts
