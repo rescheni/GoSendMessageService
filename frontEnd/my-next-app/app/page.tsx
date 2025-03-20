@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { checkAuth } from '@/src/utils/auth';
 import CreateTaskDialog from '../src/components/CreateTaskDialog';
 import TaskConfigPanel from '../src/components/TaskConfigPanel';
 
@@ -21,14 +22,12 @@ export default function Home() {
   const [error, setError] = useState('');
   const [scheduledTasks, setScheduledTasks] = useState<Task[]>([]);
   const [sentTasks, setSentTasks] = useState<Task[]>([]);
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isConfigOpen, setIsConfigOpen] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState('');
 
   useEffect(() => {
-    // 检查登录状态
-    const token = localStorage.getItem('userToken');
-    if (!token) {
+    if (!checkAuth()) {
       router.push('/login');
       return;
     }
@@ -89,25 +88,14 @@ export default function Home() {
     fetchTasks();
   }, [router]);
 
-  const handleCloseDialog = () => {
-    setIsCreateDialogOpen(false);
-    setTimeout(() => {
-      setIsConfigPanelOpen(false);
-    }, 300);
-  };
-
-  const handleMethodSelect = (method: string) => {
-    setSelectedMethod(method);
-    setIsConfigPanelOpen(true);
+  const handleCreateTask = (taskData: any) => {
+    setIsDialogOpen(false);
+    
+    console.log('发送任务:', taskData);
   };
 
   const handleConfigSubmit = (config: any) => {
-    console.log('配置提交:', config);
-    setIsConfigPanelOpen(false);
-  };
-
-  const handleOpenSettings = () => {
-    router.push('/settings');
+    setIsConfigOpen(false);
   };
 
   if (isLoading) {
@@ -136,21 +124,10 @@ export default function Home() {
           <h1 className="text-2xl font-light text-gray-900">消息任务管理</h1>
           <div className="flex space-x-4">
             <button
-              onClick={handleOpenSettings}
-              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm
-                       hover:bg-gray-200 transition-colors flex items-center space-x-2"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-              </svg>
-              <span>设置</span>
-            </button>
-            <button 
-              onClick={() => setIsCreateDialogOpen(true)}
+              onClick={() => setIsDialogOpen(true)}
               className="px-4 py-2 bg-black text-white rounded-full text-sm hover:bg-gray-800 transition-colors"
             >
-              新建任务
+              发送新消息
             </button>
           </div>
         </div>
@@ -264,18 +241,15 @@ export default function Home() {
       </div>
 
       <CreateTaskDialog
-        isOpen={isCreateDialogOpen}
-        onClose={handleCloseDialog}
-        onSubmit={(taskData) => {
-          console.log('New task:', taskData);
-          handleCloseDialog();
-        }}
-        onMethodSelect={handleMethodSelect}
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        onSubmit={handleCreateTask}
+        onMethodSelect={setSelectedMethod}
       />
 
       <TaskConfigPanel
-        isOpen={isConfigPanelOpen}
-        onClose={() => setIsConfigPanelOpen(false)}
+        isOpen={false}
+        onClose={() => setIsConfigOpen(false)}
         sendMethod={selectedMethod}
         onSubmit={handleConfigSubmit}
       />

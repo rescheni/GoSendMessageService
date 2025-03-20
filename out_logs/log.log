@@ -58,3 +58,12 @@
 {"level":"info","msg":"GoMessageService Start","time":"2025-03-19T12:21:39+08:00"}
 {"level":"info","msg":"加载定时任务","time":"2025-03-19T12:21:39+08:00"}
 {"level":"info","msg":"GetCronList[]","time":"2025-03-19T12:21:39+08:00"}
+{"level":"info","msg":"GoMessageService Start","time":"2025-03-20T15:10:45+08:00"}
+{"level":"info","msg":"加载定时任务","time":"2025-03-20T15:10:45+08:00"}
+{"level":"info","msg":"GetCronList[]","time":"2025-03-20T15:10:45+08:00"}
+{"level":"info","msg":"Attempting to connect to SMTP server: smtp.126.com:587\n","time":"2025-03-20T16:22:40+08:00"}
+{"level":"info","msg":"Username: reschen@126.com\n","time":"2025-03-20T16:22:40+08:00"}
+{"level":"info","msg":"Email sent successfully!","time":"2025-03-20T16:22:43+08:00"}
+{"level":"info","msg":"Attempting to connect to SMTP server: smtp.126.com:587\n","time":"2025-03-20T16:23:00+08:00"}
+{"level":"info","msg":"Username: reschen@126.com\n","time":"2025-03-20T16:23:00+08:00"}
+{"level":"info","msg":"Email sent successfully!","time":"2025-03-20T16:23:01+08:00"}

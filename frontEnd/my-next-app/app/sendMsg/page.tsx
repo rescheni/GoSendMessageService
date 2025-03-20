@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { checkAuth, getAuthHeader } from '@/src/utils/auth';
 
 type SendMethod = 'email' | 'dingding' | 'server_jiang' | 'feishu' | 'wxpusher' | 'napcat_qq';
 
@@ -23,6 +24,13 @@ export default function SendMessage() {
   const [recipientData, setRecipientData] = useState<Record<string, string>>({});
   const [isSending, setIsSending] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (!checkAuth()) {
+      router.push('/login');
+      return;
+    }
+  }, [router]);
 
   const sendConfigs: Record<SendMethod, SendConfig> = {
     email: {
@@ -70,20 +78,8 @@ export default function SendMessage() {
     setError('');
 
     try {
-      const apiKey = localStorage.getItem('apiKey');
-      if (!apiKey) {
-        router.push('/login');
-        return;
-      }
-
-      console.log('发送请求:', {
-        method: selectedMethod,
-        message,
-        recipientData
-      });
-
       const config = sendConfigs[selectedMethod];
-      const response = await fetch(`${config.endpoint}?api_key=${apiKey}`, {
+      const response = await fetch(`${config.endpoint}${getAuthHeader()}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

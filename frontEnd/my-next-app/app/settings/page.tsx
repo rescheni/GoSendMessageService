@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { checkAuth, getAuthHeader } from '@/src/utils/auth';
 
 interface ConfigSection {
   title: string;
@@ -26,6 +27,13 @@ export default function Settings() {
   // 使用正确的类型定义初始状态
   const [config, setConfig] = useState<ConfigData>({});
   const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    if (!checkAuth()) {
+      router.push('/login');
+      return;
+    }
+  }, [router]);
 
   const configSections: Record<string, ConfigSection> = {
     email: {
