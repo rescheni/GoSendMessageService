@@ -35,10 +35,21 @@ func APIStart() {
 		// 关闭定时任务
 		// cron.GET("/close", cron_close)
 
+		// 开启定时任务
+
+		// 更新定时任务
+		cron.GET("/update", services.Cron_update)
+
 		// 删除定时任务
 		cron.GET("/delete", services.Cron_delete)
 		// 获取所有定时任务
 		cron.GET("/list", services.Cron_list)
+	}
+	// 获取发送消息记录
+	sendlog := router.Group("/sendlog")
+	{
+		sendlog.GET("/list", services.Sendlog_list)
+		sendlog.GET("/delete", services.Sendlog_delete)
 	}
 
 	// 登录认证

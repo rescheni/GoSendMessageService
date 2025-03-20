@@ -132,6 +132,82 @@ func Corn_close(c *gin.Context) {
 
 }
 
+func Cron_update(c *gin.Context) {
+	// 解析请求体
+	var req CronRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	// 验证 API Key
+	cfg := basic.LoadConfig()
+	if req.ApiKey != cfg.Api.ApiKey {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid API key"})
+		return
+	}
+	// 更新定时任务
+	entryID, err := strconv.Atoi(req.EntryID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid EntryID format"})
+		return
+	}
+	// 根据任务类型更新不同的定时任务
+	switch req.TaskType {
+	case "wxpusher":
+		if basic.UpdateCronTask(cron.EntryID(entryID), req.CronExpr, func() {
+			sendserver.SendWxPusher(req.Title, req.Message)
+		}) {
+			c.JSON(http.StatusOK, gin.H{"message": "Cron task updated successfully"})
+		} else {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Cron task not found"})
+		}
+	case "dingding":
+		if basic.UpdateCronTask(cron.EntryID(entryID), req.CronExpr, func() {
+			sendserver.SendDing(req.Title, req.Message)
+		}) {
+			c.JSON(http.StatusOK, gin.H{"message": "Cron task updated successfully"})
+		} else {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Cron task not found"})
+		}
+	case "server_jiang":
+		if basic.UpdateCronTask(cron.EntryID(entryID), req.CronExpr, func() {
+			sendserver.SendServerJiang(req.Title, req.Message)
+		}) {
+			c.JSON(http.StatusOK, gin.H{"message": "Cron task updated successfully"})
+		} else {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Cron task not found"})
+		}
+	case "email":
+		if basic.UpdateCronTask(cron.EntryID(entryID), req.CronExpr, func() {
+			sendserver.SendEmail([]string{cfg.Email.EmailAddress}, req.Title, req.Message)
+		}) {
+			c.JSON(http.StatusOK, gin.H{"message": "Cron task updated successfully"})
+		} else {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Cron task not found"})
+		}
+	case "feishu":
+		if basic.UpdateCronTask(cron.EntryID(entryID), req.CronExpr, func() {
+			sendserver.SendFeiShu(req.Title, req.Message)
+		}) {
+			c.JSON(http.StatusOK, gin.H{"message": "Cron task updated successfully"})
+		} else {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Cron task not found"})
+		}
+	case "napcat_qq":
+		if basic.UpdateCronTask(cron.EntryID(entryID), req.CronExpr, func() {
+			sendserver.SendQQPrivateMsg(req.Message, "1413024330")
+		}) {
+			c.JSON(http.StatusOK, gin.H{"message": "Cron task updated successfully"})
+		} else {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Cron task not found"})
+		}
+	default:
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid task type"})
+		return
+	}
+
+}
+
 func Cron_delete(c *gin.Context) {
 	apiKey := c.Query("api_key")
 	entryIDStr := c.Query("entryid") // 修改为小写 "entryid"

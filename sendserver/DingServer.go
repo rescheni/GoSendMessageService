@@ -2,6 +2,7 @@ package sendserver
 
 import (
 	basic "GoMessageService/Basic"
+
 	log "GoMessageService/log"
 	"bytes"
 	"encoding/json"
@@ -39,5 +40,4 @@ func SendDing(title, content string) {
 	}
 	defer resp.Body.Close()
 
-	// 处理响应
 }

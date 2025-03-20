@@ -12,7 +12,7 @@ import (
 
 // SendEmail 用于发送邮件
 func SendEmail(sendTo []string, title string, message string) {
-	emailTest(sendTo, title, message)
+	emailTest(sendTo, message, title)
 }
 
 // emailTest 发送测试邮件

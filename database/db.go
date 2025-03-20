@@ -14,6 +14,27 @@ var dg *gorm.DB //全局的数据库实例
 func GetDB() *gorm.DB {
 	return dg
 }
+func SaveSendedMessage(sendtime string, title string, message string, sendType string, userid string) {
+	var sendMessage SendMessage
+	sendMessage.SendTime = sendtime
+	sendMessage.SendType = sendType
+	sendMessage.UserId = userid
+	sendMessage.Title = title
+	sendMessage.Message = message
+	dg.Create(&sendMessage)
+
+}
+func GetSendedMessage() []SendMessage {
+	var sendMessages []SendMessage
+	dg.Find(&sendMessages)
+	return sendMessages
+}
+func DeleteSendedMessage(sendid int) {
+
+	var sendMessage SendMessage
+	dg.First(&sendMessage, sendid)
+	dg.Delete(sendMessage)
+}
 
 // 插入cron定时任务
 func InsertCron(cron *Cron) bool {
@@ -78,6 +99,7 @@ func InitDB() {
 	// 目前没有打算注册账号，所以先注释掉
 	// dg.AutoMigrate(&User{})
 	dg.AutoMigrate(&Cron{})
+	dg.AutoMigrate(&SendMessage{})
 }
 
 // CloseDB 关闭数据库

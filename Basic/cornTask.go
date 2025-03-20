@@ -41,6 +41,34 @@ func SetCronTask(cronExpr string, task func()) error {
 	return nil
 }
 
+// 更新定时任务
+func UpdateCronTask(entryID cron.EntryID, cronExpr string, task func()) bool {
+	c := newWithSeconds()
+	// 获取任务表达式
+	cronMutex.RLock()
+	_, exists := cronTasks[entryID]
+	cronMutex.RUnlock()
+	// 如果任务不存在，返回 false
+	if !exists {
+		return false
+	}
+
+	// 更新任务
+	c.Remove(entryID)
+	newEntryID, err := c.AddFunc(cronExpr, task)
+	if err != nil {
+		return false
+	}
+
+	// 更新任务列表
+	cronMutex.Lock()
+	cronTasks[newEntryID] = cronExpr
+	delete(cronTasks, entryID)
+	cronMutex.Unlock()
+
+	return true
+}
+
 // 删除定时任务
 func DeleteCronTask(entryID cron.EntryID) bool {
 	c := newWithSeconds()
