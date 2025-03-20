@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 
 export default function Login() {
   const router = useRouter();
-  const [token, setToken] = useState('');
+  const [apiKey, setApiKey] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -14,15 +14,34 @@ export default function Login() {
     setIsLoading(true);
     setError('');
 
+    const trimmedApiKey = apiKey.trim();
+    console.log('尝试登录，使用 API Key:', trimmedApiKey);
+
     try {
-      // 模拟登录验证
-      if (token === 'test123') {
-        localStorage.setItem('userToken', token);
-        router.push('/');
-      } else {
-        setError('无效的令牌');
+      const response = await fetch(`/api/user/login?api_key=${trimmedApiKey}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+
+      const data = await response.json();
+      console.log('服务器响应:', data);
+
+      if (response.status === 401) {
+        console.log('API Key 验证失败');
+        setError('API Key 无效');
+        return;
       }
+
+      if (!response.ok) {
+        throw new Error(`请求失败: ${response.status}`);
+      }
+
+      localStorage.setItem('apiKey', trimmedApiKey);
+      router.push('/');
     } catch (error: any) {
+      console.error('登录错误:', error);
       setError('登录失败: ' + (error.message || '未知错误'));
     } finally {
       setIsLoading(false);
@@ -35,22 +54,24 @@ export default function Login() {
         <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm">
           <div className="text-center mb-8">
             <h1 className="text-2xl font-light text-gray-900 mb-2">欢迎登录</h1>
-            <p className="text-sm text-gray-500">请输入您的API令牌以继续</p>
+            <p className="text-sm text-gray-500">请输入API Key以继续</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="token" className="block text-sm font-medium text-gray-700 mb-2">
-                API令牌
+              <label htmlFor="apiKey" className="block text-sm font-medium text-gray-700 mb-2">
+                API Key
               </label>
               <div className="relative">
                 <input
-                  type="text"
-                  id="token"
-                  value={token}
-                  onChange={(e) => setToken(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200 focus:border-transparent transition-colors"
-                  placeholder="请输入您的API令牌"
+                  type="password"
+                  id="apiKey"
+                  value={apiKey}
+                  onChange={(e) => setApiKey(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg 
+                           focus:outline-none focus:ring-2 focus:ring-gray-200 
+                           focus:border-transparent transition-colors"
+                  placeholder="请输入API Key"
                   required
                 />
                 <div className="absolute inset-y-0 right-0 flex items-center pr-3">
@@ -70,7 +91,10 @@ export default function Login() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full px-4 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-200 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full px-4 py-2 bg-black text-white rounded-lg text-sm 
+                       font-medium hover:bg-gray-800 focus:outline-none focus:ring-2 
+                       focus:ring-gray-200 focus:ring-offset-2 transition-colors 
+                       disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">
@@ -82,12 +106,6 @@ export default function Login() {
               )}
             </button>
           </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-xs text-gray-500">
-              测试令牌: <span className="font-mono bg-gray-50 border border-gray-200 px-2 py-1 rounded">test123</span>
-            </p>
-          </div>
         </div>
       </div>
     </div>

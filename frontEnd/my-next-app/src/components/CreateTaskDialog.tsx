@@ -77,7 +77,6 @@ export default function CreateTaskDialog({ isOpen, onClose, onSubmit, onMethodSe
                 >
                   <option value="">请选择发送方式</option>
                   <option value="email">邮件</option>
-                  <option value="sms">短信</option>
                   <option value="wechat">微信公众号</option>
                   <option value="dingtalk">钉钉API</option>
                   <option value="feishu">飞书API</option>
