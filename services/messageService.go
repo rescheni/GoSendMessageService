@@ -7,6 +7,7 @@ import (
 	"GoMessageService/database"
 	log "GoMessageService/log"
 	"GoMessageService/sendserver"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -16,10 +17,66 @@ import (
 
 // MessageRequest 消息请求结构
 type MessageRequest struct {
-	ApiKey  string   `json:"api_key" binding:"required"`
-	Message string   `json:"message" binding:"required"`
-	ToUser  []string `json:"to_user,omitempty"`
-	Title   string   `json:"title,omitempty"`
+	ApiKey  string `json:"api_key" binding:"required"`
+	Message string `json:"message" binding:"required"`
+	ToUser  string `json:"to_user,omitempty"`
+	Title   string `json:"title,omitempty"`
+}
+
+// UnifiedMessageRequest 统一消息请求结构
+type UnifiedMessageRequest struct {
+	ApiKey  string `json:"api_key" binding:"required"`
+	Path    string `json:"path" binding:"required"` // 消息路径，例如 /wxpusher, /dingding 等
+	Message string `json:"message" binding:"required"`
+	ToUser  string `json:"to_user,omitempty"`
+	Title   string `json:"title,omitempty"`
+}
+
+// SendMessage 统一发送消息接口
+func SendMessage(c *gin.Context) {
+	var req UnifiedMessageRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// 验证 API Key
+	cfg := basic.LoadConfig()
+	if req.ApiKey != cfg.Api.ApiKey {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid API key"})
+		return
+	}
+
+	// 根据路径调用相应的处理逻辑
+	switch req.Path {
+	case "/wxpusher":
+		sendserver.SendWxPusher(req.Title, req.Message)
+	case "/dingding":
+		sendserver.SendDing(req.Title, req.Message)
+	case "/server_jiang":
+		sendserver.SendServerJiang(req.Title, req.Message)
+	case "/email":
+		toUser := []string{cfg.Email.EmailAddress}
+		if req.ToUser != "" {
+			toUser = []string{req.ToUser}
+		}
+		sendserver.SendEmail(toUser, req.Title, req.Message)
+	case "/feishu":
+		sendserver.SendFeiShu(req.Title, req.Message)
+	case "/napcat_qq":
+		toUser := cfg.Napcat.NapcatQQ
+		sendserver.SendQQPrivateMsg(req.Message, toUser)
+	default:
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid path"})
+		return
+	}
+
+	// 记录发送日志
+	sendtime := time.Now().Format("2006-01-02 15:04:05")
+	log.Logger.Info(fmt.Sprintf("%s 消息发送成功", req.Path))
+	database.SaveSendedMessage(sendtime, req.Title, req.Message, req.Path, "success")
+
+	c.JSON(http.StatusOK, gin.H{"message": "Message sent successfully"})
 }
 
 func Send_wxpusher(c *gin.Context) {
@@ -106,14 +163,16 @@ func Send_email(c *gin.Context) {
 	log.Logger.Info("Email消息发送成功")
 	database.SaveSendedMessage(sendtime, req.Title, req.Message, "Email", "success")
 
-	tosendUser := req.ToUser
-	// 如果 ToUser 为空，则发送到配置文件中的邮箱
-	if len(tosendUser) == 0 {
-		tosendUser = []string{cfg.Email.EmailAddress}
+	tosendUser := []string{""}
+	// 如果sendto 为空，则发送到配置文件中的邮箱
+	if req.ToUser == "" {
+		tosendUser[0] = cfg.Email.EmailAddress
+	} else {
+		tosendUser[0] = req.ToUser
 	}
 
 	// 发送消息
-	sendserver.SendEmail(tosendUser, req.Title, req.Message)
+	sendserver.SendEmail([]string{cfg.Email.EmailAddress}, req.Title, req.Message)
 	c.JSON(http.StatusOK, gin.H{"message": "Message sent successfully"})
 }
 

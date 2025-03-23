@@ -18,13 +18,8 @@ func APIStart() {
 
 	send := router.Group("/send")
 	{
-		// 发送消息
-		send.POST("/wxpusher", services.Send_wxpusher)
-		send.POST("/dingding", services.Send_dingding)
-		send.POST("/server_jiang", services.Send_server_jiang)
-		send.POST("/email", services.Send_email)
-		send.POST("/feishu", services.Send_feishu)
-		send.POST("/napcat_qq", services.Send_napcat_qq)
+		// 统一发送消息接口
+		send.POST("/message", services.SendMessage)
 	}
 
 	cron := router.Group("/cron")

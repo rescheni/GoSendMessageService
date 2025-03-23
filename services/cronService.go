@@ -65,12 +65,7 @@ func Cron_set(c *gin.Context) {
 
 	var inCron database.Cron
 	// 检查是否存在重复的 EntryID
-	entryID, err := strconv.Atoi(req.EntryID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid EntryID format"})
-		return
-	}
-	inCron.ID = uint(entryID)
+
 	inCron.CronExpr = req.CronExpr // 任务表达式
 	inCron.EntryID = req.EntryID   // 任务 ID
 	inCron.Message = req.Message   // 消息内容
@@ -101,7 +96,11 @@ func Cron_set(c *gin.Context) {
 		})
 	case "email":
 		err = basic.SetCronTask(req.CronExpr, func() {
-			sendserver.SendEmail([]string{cfg.Email.EmailAddress}, req.Title, req.Message)
+			toUser := []string{cfg.Email.EmailAddress}
+			if len(req.ToUser) > 0 {
+				toUser = []string{req.ToUser}
+			}
+			sendserver.SendEmail(toUser, req.Title, req.Message)
 		})
 	case "feishu":
 		err = basic.SetCronTask(req.CronExpr, func() {
@@ -109,7 +108,8 @@ func Cron_set(c *gin.Context) {
 		})
 	case "napcat_qq":
 		err = basic.SetCronTask(req.CronExpr, func() {
-			sendserver.SendQQPrivateMsg(req.Message, "1413024330")
+			toUser := basic.LoadConfig().Napcat.NapcatQQ
+			sendserver.SendQQPrivateMsg(req.Message, toUser)
 		})
 	default:
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid task type"})
