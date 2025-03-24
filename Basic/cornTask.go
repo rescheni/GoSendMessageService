@@ -8,10 +8,10 @@ import (
 )
 
 var (
-	cronInstance *cron.Cron                      // 全局 cron 实例
-	cronTasks    = make(map[cron.EntryID]string) // 通过 entryID 来获取 cron 表达式
-	cronMutex    sync.RWMutex                    // 使用读写锁
-	cronOnce     sync.Once                       // 保证 cronInstance 只被初始化一次
+	cronInstance *cron.Cron                          // 全局 cron 实例
+	cronTasks    = make(map[cron.EntryID]([]string)) // 通过 entryID 来获取 cron 表达式
+	cronMutex    sync.RWMutex                        // 使用读写锁
+	cronOnce     sync.Once                           // 保证 cronInstance 只被初始化一次
 )
 
 // 返回一个支持至 秒 级别的 cron
@@ -24,7 +24,7 @@ func newWithSeconds() *cron.Cron {
 }
 
 // 设置定时任务
-func SetCronTask(cronExpr string, task func()) error {
+func SetCronTask(cronName, cronExpr string, task func()) error {
 	// 创建新的 cron 实例
 	c := newWithSeconds()
 
@@ -35,10 +35,40 @@ func SetCronTask(cronExpr string, task func()) error {
 	}
 	// 更新任务列表
 	cronMutex.Lock()
-	cronTasks[entryID] = cronExpr
+	cronTasks[entryID] = append(cronTasks[entryID], cronName)
+	cronTasks[entryID] = append(cronTasks[entryID], cronExpr)
 	cronMutex.Unlock()
 
 	return nil
+}
+
+// 更新定时任务
+func UpdateCronTask(entryID cron.EntryID, entryName, cronExpr string, task func()) bool {
+	c := newWithSeconds()
+	// 获取任务表达式
+	cronMutex.RLock()
+	_, exists := cronTasks[entryID]
+	cronMutex.RUnlock()
+	// 如果任务不存在，返回 false
+	if !exists {
+		return false
+	}
+
+	// 更新任务
+	c.Remove(entryID)
+	newEntryID, err := c.AddFunc(cronExpr, task)
+	if err != nil {
+		return false
+	}
+
+	// 更新任务列表
+	cronMutex.Lock()
+	cronTasks[newEntryID] = append(cronTasks[newEntryID], entryName)
+	cronTasks[newEntryID] = append(cronTasks[newEntryID], cronExpr)
+	delete(cronTasks, entryID)
+	cronMutex.Unlock()
+
+	return true
 }
 
 // 删除定时任务
@@ -67,24 +97,32 @@ func DeleteCronTask(entryID cron.EntryID) bool {
 
 // 获取所有定时任务
 func ListCronTasks() []struct {
-	EntryID cron.EntryID
-	Expr    string
+	CronName string
+	ID       int
+	EntryID  cron.EntryID
+	Expr     string
 } {
 	// c := newWithSeconds()
 	var tasks []struct {
-		EntryID cron.EntryID
-		Expr    string
+		CronName string
+		ID       int
+		EntryID  cron.EntryID
+		Expr     string
 	}
 
 	// 获取所有任务
 	cronMutex.RLock()
 	for entryID := range cronTasks {
 		tasks = append(tasks, struct {
-			EntryID cron.EntryID
-			Expr    string
+			CronName string
+			ID       int
+			EntryID  cron.EntryID
+			Expr     string
 		}{
-			EntryID: entryID,
-			Expr:    cronTasks[entryID],
+			CronName: cronTasks[entryID][0],
+			ID:       int(entryID),
+			EntryID:  entryID,
+			Expr:     cronTasks[entryID][1],
 		})
 	}
 	cronMutex.RUnlock()

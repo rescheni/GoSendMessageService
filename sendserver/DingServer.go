@@ -39,5 +39,4 @@ func SendDing(title, content string) {
 	}
 	defer resp.Body.Close()
 
-	// 处理响应
 }

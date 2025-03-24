@@ -3,7 +3,6 @@ package main
 import (
 	api "GoMessageService/API"
 	"GoMessageService/database"
-	log "GoMessageService/log"
 )
 
 // send all the messages
@@ -26,8 +25,6 @@ import (
 // }
 
 func main() {
-	// 启动每天的定时任务守护进程
-	log.Logger.Info("GoMessageService Start")
 
 	// 初始化数据库
 	database.InitDB()
