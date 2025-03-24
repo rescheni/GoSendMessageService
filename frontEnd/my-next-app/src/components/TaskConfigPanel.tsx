@@ -9,9 +9,7 @@ interface TaskConfigPanelProps {
 
 export default function TaskConfigPanel({ isOpen, onClose, sendMethod, onSubmit }: TaskConfigPanelProps) {
   const [recipient, setRecipient] = useState('');
-  const [datetime, setDatetime] = useState('');
   const [cronExpression, setCronExpression] = useState('');
-  const [isRepeat, setIsRepeat] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -26,16 +24,14 @@ export default function TaskConfigPanel({ isOpen, onClose, sendMethod, onSubmit 
     e.preventDefault();
     onSubmit({
       recipient,
-      datetime,
       cronExpression,
-      isRepeat
     });
     handleClose();
   };
 
   const handleClose = () => {
     setIsVisible(false);
-    setTimeout(onClose, 300); // 等待动画完成后再关闭
+    setTimeout(onClose, 300);
   };
 
   return (
@@ -67,10 +63,11 @@ export default function TaskConfigPanel({ isOpen, onClose, sendMethod, onSubmit 
               </label>
               <div className="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700">
                 {sendMethod === 'email' && '邮件'}
-                {sendMethod === 'sms' && '短信'}
-                {sendMethod === 'wechat' && '微信公众号'}
-                {sendMethod === 'dingtalk' && '钉钉API'}
-                {sendMethod === 'feishu' && '飞书API'}
+                {sendMethod === 'dingding' && '钉钉'}
+                {sendMethod === 'server_jiang' && 'Server酱'}
+                {sendMethod === 'feishu' && '飞书'}
+                {sendMethod === 'wxpusher' && '微信推送'}
+                {sendMethod === 'napcat_qq' && 'QQ'}
               </div>
             </div>
 
@@ -89,39 +86,18 @@ export default function TaskConfigPanel({ isOpen, onClose, sendMethod, onSubmit 
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                发送时间
+                Cron 表达式
               </label>
-              <div className="space-y-2">
-                <input
-                  type="datetime-local"
-                  value={datetime}
-                  onChange={(e) => setDatetime(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200 focus:border-transparent transition-all duration-200"
-                />
-                <div className="text-xs text-gray-500">
-                  或使用 cron 表达式：
-                  <input
-                    type="text"
-                    value={cronExpression}
-                    onChange={(e) => setCronExpression(e.target.value)}
-                    className="w-full mt-1 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200 focus:border-transparent transition-all duration-200"
-                    placeholder="例如：0 0 12 * * ?"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center">
               <input
-                type="checkbox"
-                id="repeat"
-                checked={isRepeat}
-                onChange={(e) => setIsRepeat(e.target.checked)}
-                className="h-4 w-4 text-gray-900 focus:ring-gray-200 border-gray-300 rounded"
+                type="text"
+                value={cronExpression}
+                onChange={(e) => setCronExpression(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200 focus:border-transparent transition-all duration-200"
+                placeholder="例如：0 0 12 * * ?"
               />
-              <label htmlFor="repeat" className="ml-2 text-sm text-gray-700">
-                重复发送
-              </label>
+              <p className="mt-1 text-xs text-gray-500">
+                示例: "*/5 * * * *" 表示每5分钟执行一次
+              </p>
             </div>
 
             <div className="pt-4">

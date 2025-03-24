@@ -1,4 +1,7 @@
+'use client';
+
 import { useState, useEffect } from 'react';
+import { getAuthHeader } from '@/src/utils/auth';
 
 interface CreateTaskDialogProps {
   isOpen: boolean;
@@ -7,12 +10,23 @@ interface CreateTaskDialogProps {
   onMethodSelect: (method: string) => void;
 }
 
-type SendMethod = 'email' | 'sms' | 'wechat' | 'dingtalk' | 'feishu';
+// 定义发送方式和对应的接口路径
+const SEND_METHODS = {
+  'email': '/send/email',
+  'dingding': '/send/dingding',
+  'server_jiang': '/send/server_jiang',
+  'feishu': '/send/feishu',
+  'wxpusher': '/send/wxpusher',
+  'napcat_qq': '/send/napcat_qq'
+};
 
-export default function CreateTaskDialog({ isOpen, onClose, onSubmit, onMethodSelect }: CreateTaskDialogProps) {
+export default function CreateTaskDialog({ isOpen, onClose, onSubmit }: CreateTaskDialogProps) {
   const [content, setContent] = useState('');
-  const [sendMethod, setSendMethod] = useState<SendMethod | ''>('');
+  const [title, setTitle] = useState('');
+  const [sendMethod, setSendMethod] = useState('');
   const [isVisible, setIsVisible] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (isOpen) {
@@ -22,20 +36,47 @@ export default function CreateTaskDialog({ isOpen, onClose, onSubmit, onMethodSe
     }
   }, [isOpen]);
 
-  const handleMethodChange = (method: SendMethod) => {
-    setSendMethod(method);
-    onMethodSelect(method);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ content, sendMethod });
-    onClose();
+    setIsSending(true);
+    setError('');
+
+    try {
+      const endpoint = SEND_METHODS[sendMethod as keyof typeof SEND_METHODS];
+      if (!endpoint) {
+        throw new Error('请选择发送方式');
+      }
+
+      const response = await fetch(`/api${endpoint}${getAuthHeader()}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          api_key: localStorage.getItem('apiKey'),
+          message: content,
+          title
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || '发送失败');
+      }
+
+      console.log('发送成功');
+      handleClose();
+    } catch (error: any) {
+      console.error('发送错误:', error);
+      setError(error.message || '发送失败');
+    } finally {
+      setIsSending(false);
+    }
   };
 
   const handleClose = () => {
     setIsVisible(false);
-    setTimeout(onClose, 300); // 等待动画完成后再关闭
+    setTimeout(onClose, 300);
   };
 
   if (!isOpen) return null;
@@ -72,15 +113,32 @@ export default function CreateTaskDialog({ isOpen, onClose, onSubmit, onMethodSe
                 </label>
                 <select
                   value={sendMethod}
-                  onChange={(e) => handleMethodChange(e.target.value as SendMethod)}
+                  onChange={(e) => setSendMethod(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200 focus:border-transparent transition-all duration-200"
+                  required
                 >
                   <option value="">请选择发送方式</option>
                   <option value="email">邮件</option>
-                  <option value="wechat">微信公众号</option>
-                  <option value="dingtalk">钉钉API</option>
-                  <option value="feishu">飞书API</option>
+                  <option value="dingding">钉钉</option>
+                  <option value="server_jiang">Server酱</option>
+                  <option value="feishu">飞书</option>
+                  <option value="wxpusher">微信推送</option>
+                  <option value="napcat_qq">QQ</option>
                 </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  内容标题
+                </label>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200 focus:border-transparent transition-all duration-200"
+                  placeholder="请输入消息标题"
+                  required
+                />
               </div>
 
               <div>
@@ -93,8 +151,15 @@ export default function CreateTaskDialog({ isOpen, onClose, onSubmit, onMethodSe
                   rows={6}
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200 focus:border-transparent transition-all duration-200 resize-none"
                   placeholder="请输入要发送的消息内容..."
+                  required
                 />
               </div>
+
+              {error && (
+                <div className="text-sm text-red-500 bg-red-50 border border-red-100 rounded-lg px-4 py-2">
+                  {error}
+                </div>
+              )}
 
               <div className="flex justify-end space-x-3">
                 <button
@@ -106,9 +171,17 @@ export default function CreateTaskDialog({ isOpen, onClose, onSubmit, onMethodSe
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-sm font-medium text-white bg-black rounded-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-200 focus:ring-offset-2 transition-all duration-200"
+                  disabled={isSending}
+                  className="px-4 py-2 text-sm font-medium text-white bg-black rounded-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-200 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  下一步
+                  {isSending ? (
+                    <div className="flex items-center justify-center">
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                      发送中...
+                    </div>
+                  ) : (
+                    '发送'
+                  )}
                 </button>
               </div>
             </form>
