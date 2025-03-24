@@ -39,20 +39,6 @@ func DeleteSendedMessage(sendid int) {
 // 插入cron定时任务
 func InsertCron(cron *Cron) bool {
 	// TODO: 检查cron的有效性
-	// 检查 entryID 是否为空
-	if cron.EntryID == "" {
-		log.Logger.Error("EntryID is empty")
-		return false
-	}
-
-	// 检查 cron ID 是否重复
-	var existingCron Cron
-	result := dg.Where("entry_id = ?", cron.EntryID).First(&existingCron)
-	if result.RowsAffected > 0 {
-		log.Logger.Error("Cron ID already exists", cron.EntryID)
-		return false
-	}
-
 	dg.Create(cron)
 	return true
 }
@@ -65,7 +51,7 @@ func UpdateCron(cron *Cron) {
 // 删除cron定时任务
 func DeleteCron(entryID string) {
 	var cron Cron
-	dg.Where("entry_id = ?", entryID).First(&cron)
+	dg.Where("ID = ?", entryID).First(&cron)
 	dg.Delete(cron)
 }
 

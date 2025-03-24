@@ -1,6 +1,7 @@
 *.yaml
 log/log.log
 plug-in/*
+plug-in/fate/*
 
 # Next.js 项目忽略规则
 frontEnd/my-next-app/node_modules/

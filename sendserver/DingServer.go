@@ -2,7 +2,6 @@ package sendserver
 
 import (
 	basic "GoMessageService/Basic"
-
 	log "GoMessageService/log"
 	"bytes"
 	"encoding/json"

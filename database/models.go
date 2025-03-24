@@ -19,12 +19,14 @@ type Cron struct {
 	ID       uint   `json:"id" gorm:"primaryKey"`
 	ApiKey   string `json:"api" binding:"required"`
 	CronExpr string `json:"cron_expr" binding:"required"`
+	CronName string `json:"cron_name" binding:"required"`
 	EntryID  string `json:"entry_id,omitempty"`
 	Message  string `json:"message" binding:"required"`
 	Title    string `json:"title,omitempty"`
+	ToUser   string `json:"to_user,omitempty"`
 	TaskType string `json:"task_type" binding:"required"` // 任务类型：wxpusher, dingding, server_jiang, email, feishu, napcat_qq
 	// 任务状态：0-未启动，1-已启动
-	Status bool `json:"status"`
+	// Status bool `json:"status"`
 }
 
 type SendMessage struct {
@@ -45,7 +47,7 @@ func LoadCornTaskOnDb() {
 	for _, cron := range crons {
 
 		// 设置定时任务
-		basic.SetCronTask(cron.CronExpr, func() {
+		basic.SetCronTask(cron.CronName, cron.CronExpr, func() {
 			switch cron.TaskType {
 			case "wxpusher":
 				sendserver.SendWxPusher(cron.Title, cron.Message)
@@ -54,11 +56,11 @@ func LoadCornTaskOnDb() {
 			case "server_jiang":
 				sendserver.SendServerJiang(cron.Title, cron.Message)
 			case "email":
-				sendserver.SendEmail([]string{"14130243430@qq.com"}, cron.Title, cron.Message)
+				sendserver.SendEmail([]string{cron.ToUser}, cron.Title, cron.Message)
 			case "feishu":
 				sendserver.SendFeiShu(cron.Title, cron.Message)
 			case "napcat_qq":
-				sendserver.SendQQPrivateMsg(cron.Message, "1413024330")
+				sendserver.SendQQPrivateMsg(cron.Message, cron.ToUser)
 			}
 		})
 	}
