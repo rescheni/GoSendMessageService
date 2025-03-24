@@ -17,11 +17,15 @@ func APIStart() {
 	router := gin.Default()
 
 	send := router.Group("/send")
+	// 发送消息
 	{
-		// 统一发送消息接口
-		send.POST("/message", services.SendMessage)
+		send.POST("/wxpusher", services.Send_wxpusher)
+		send.POST("/dingding", services.Send_dingding)
+		send.POST("/server jiang", services.Send_server_jiang)
+		send.POST("/email", services.Send_email)
+		send.POST("/feishu", services.Send_feishu)
+		send.POST("/napcat_qq", services.Send_napcat_qq)
 	}
-
 	cron := router.Group("/cron")
 	{
 		// 设置定时任务
