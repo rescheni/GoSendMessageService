@@ -1,8 +1,0 @@
-{"level":"info","msg":"加载定时任务","time":"2025-03-24T15:39:47+08:00"}
-{"level":"info","msg":"GetCronList[]","time":"2025-03-24T15:39:47+08:00"}
-{"level":"info","msg":"加载定时任务","time":"2025-03-24T15:41:42+08:00"}
-{"level":"info","msg":"GetCronList[]","time":"2025-03-24T15:41:42+08:00"}
-{"level":"info","msg":"加载定时任务","time":"2025-03-24T16:24:53+08:00"}
-{"level":"info","msg":"GetCronList[]","time":"2025-03-24T16:24:53+08:00"}
-{"level":"info","msg":"加载定时任务","time":"2025-03-24T16:27:21+08:00"}
-{"level":"info","msg":"GetCronList[{3 1234567890 0/5 * * * * ? Test Cron  这是一个测试消息 测试标题  dingding}]","time":"2025-03-24T16:27:21+08:00"}
