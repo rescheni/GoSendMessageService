@@ -4,10 +4,10 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: 'http://0.0.0.0:8080/:path*',
+        destination: `${process.env.NEXT_PUBLIC_API_BASE_URL}/:path*`, // 使用环境变量
       },
     ];
   },
 };
 
-module.exports = nextConfig; 
+module.exports = nextConfig;
