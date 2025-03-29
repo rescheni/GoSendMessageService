@@ -24,11 +24,18 @@ cd GoSendMessageService
 
 ## 设置环境变量
 
-- 在项目目录下的`.env`文件中编辑 docker 目录路径和一些其他配置[目前暂无]
+- 在项目目录下的`.env`文件中编辑 docker 目录路径和一些其他配置
 
 ```
+# 配置文件目录[暂时不用]
 CONFIG_DIR =
+# 数据库文件目录[暂时不用]
 DATA_DIR =
+# 前端端口
+FRONTEND_PORT =33000
+# 后端端口
+BACKEND_PORT =38080
+
 ```
 
 ## 部署 Docker 镜像
