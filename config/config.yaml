@@ -1,0 +1,63 @@
+# 设置api
+api:
+  api_port: 8080
+  api_host: "0.0.0.0"
+  api_path: "/api"
+  api_key: "1234567890"
+
+# 日志文件存储位置
+log:
+  log_path: "logs/log.log"
+
+sqlite:
+  db_path: "data/cron.db"
+
+# 设置 邮件服务
+email:
+  # 邮箱地址
+  email_address: "example@126.com"
+  # 邮箱用户名（通常和邮箱地址相同）
+  username: "example@126.com"
+  # SMTP 服务器地址
+  smtp_server: "smtp.126.com"
+  # SMTP 端口（587为TLS，465为SSL）
+  smtp_port: 587
+  # 授权码（通常是应用专用密码）
+  auth_code: ""
+  # 加密方式("SSL" 或 "TLS")
+  encryption: "TLS"
+  # 发件人昵称（可选）
+  sender_name: "Send_Message_Server"
+
+# 设置server酱
+# https://sct.ftqq.com/sendkey
+server_jiang:
+  server_jiang_key: ""
+  server_jiang_desp: "Send_Message_Server"
+
+# 设置飞书
+# https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/server-side-sdk/golang-sdk-guide/preparations
+feishu:
+  feishu_app_id: ""
+  feishu_app_secret: ""
+  feishu_user_id: ""
+
+# 设置钉钉
+# https://www.oryoy.com/news/golang-shi-xian-ding-ding-ji-qi-ren-zi-dong-fa-song-xiao-xi-de-wan-zheng-zhi-nan.html
+#  目前只支持 webhook
+# https://oapi.dingtalk.com/robot/send?access_token=?YOUR_ACCESS_TOKEN
+dingding:
+  access_token: ""
+
+# 设置微信
+# https://wxpusher.zjiecode.com/docs/#/?id=spt
+wx_push:
+  wx_push_key: ""
+  # 默认UID 可以为空 后期使用adduserlist添加用户
+  default_uid: ""
+
+# 设置napcat
+napcat:
+  napcat_url: "http://example.com:3000/"
+  napcat_token: ""
+  napcat_qq: ""

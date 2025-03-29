@@ -1,7 +1,8 @@
-*.yaml
-log/log.log
+
+logs/log.log
 plug-in/*
 plug-in/fate/*
+./GoMessageService.exe
 
 # Next.js 项目忽略规则
 frontEnd/my-next-app/node_modules/

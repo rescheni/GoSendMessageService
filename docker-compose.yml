@@ -1,1 +1,35 @@
- 
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      # target: final # 显式指定多阶段构建的最终阶段
+    image: send_message_service-go:1.10
+    container_name: send_message_service-go
+    hostname: sms-server
+    ports:
+      - "${FRONTEND_PORT}:3000" # 前端端口
+      - "${BACKEND_PORT}:8080" # 后端端口
+    volumes:
+      # 数据库文件
+      - send_message_service-data:/app/data\
+      # 配置文件目录
+      - send_message_service-config:/app/config
+    environment:
+      NODE_ENV: production
+      GIN_MODE: release
+    networks:
+      - sms_net
+
+networks:
+  sms_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/24
+
+volumes:
+  send_message_service-data:
+  send_message_service-config:

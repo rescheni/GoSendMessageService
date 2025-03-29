@@ -1,7 +1,11 @@
 #!/bin/sh
 
-# 启动后端服务
-./main &
+# 启动服务
+./server &
+SERVER_PID=$!
 
-# 启动前端服务
-npm start
+npm start &
+FRONTEND_PID=$!
+
+trap "kill -TERM $SERVER_PID $FRONTEND_PID" SIGTERM
+wait $SERVER_PID $FRONTEND_PID
