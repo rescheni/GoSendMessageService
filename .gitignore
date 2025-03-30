@@ -2,8 +2,8 @@
 logs/log.log
 plug-in/*
 plug-in/fate/*
-./GoMessageService.exe
-./node_modules/
+GoMessageService.exe
+node_modules/
 
 # Next.js 项目忽略规则
 frontEnd/my-next-app/node_modules/
